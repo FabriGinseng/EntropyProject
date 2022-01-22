@@ -99,9 +99,9 @@ export default class Home extends Vue {
 
   descrizioneNodo = '';
 
-  nodi: any = {};
+  nodi = {};
 
-  edges: any = {};
+  edges = {};
 
   source = '';
 
@@ -111,7 +111,7 @@ export default class Home extends Vue {
 
   public graph: Map = new Map();
 
-  AggiungiLink() {
+  AggiungiLink():void {
     this.graph.edges.push(
       {
         // eslint-disable-next-line no-plusplus
@@ -123,7 +123,7 @@ export default class Home extends Vue {
     this.graph.creaLink(this.edges);
   }
 
-  AggiungiNodo() {
+  AggiungiNodo():void {
     this.graph.nodes.push(
       {
         name: this.descrizioneNodo,
@@ -134,7 +134,7 @@ export default class Home extends Vue {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  onSubmit() {
+  onSubmit():void {
     console.log('submit!');
   }
 }
