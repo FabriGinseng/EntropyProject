@@ -1,25 +1,30 @@
 <template>
   <el-main>
     <el-row>
-      <el-col :lg="12" :md="24" :sm="24" :xl="12" :xs="24">
+      <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
+
         <el-row>
-          <el-col :lg="12" :md="24" :sm="24" :xl="12" :xs="24">
-            <el-form ref="formRef" label-position="top" label-width="150px">
-              <el-form-item label="Nome nodo">
-                <el-input v-model="nomeNodo"></el-input>
-              </el-form-item>
-              <el-form-item label="Descrizione nodo">
-                <el-input v-model="descrizioneNodo" type="textarea"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button @click="AggiungiNodo()">Aggiungi</el-button>
-              </el-form-item>
-            </el-form>
-          </el-col>
+          <el-card>
+            <h2>AGGIUNGI NODI</h2>
+            <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+              <el-form ref="formRef" label-position="top" label-width="150px">
+                <el-form-item label="Nome nodo">
+                  <el-input v-model="nomeNodo"></el-input>
+                </el-form-item>
+                <el-form-item label="Descrizione nodo">
+                  <el-input v-model="descrizioneNodo" type="textarea"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button @click="AggiungiNodo()">Aggiungi</el-button>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-card>
+
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
-          <el-col :lg="12" :md="24" :sm="24" :xl="12" :xs="24">
+          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
             <h2>Nodes</h2>
             <el-table :data="graph.nodes">
               <el-table-column label="Nome" prop="descrizione"/>
@@ -29,8 +34,10 @@
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
-          <el-col :lg="12" :md="24" :sm="24" :xl="12" :xs="24">
-            <el-form ref="formRef" label-position="top" label-width="150px">
+          <h2>AGGIUNGI ARCHI</h2>
+          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+            <el-form ref="formRef" label-position="left">
+              <el-col :lg="12" :md="24" :sm="24" :xl="12" :xs="12">
               <el-form-item label="Start node">
                 <el-select v-model="source"  placeholder="Select">
                   <el-option
@@ -42,8 +49,9 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-divider border-style="double"></el-divider>
-              <el-form-item label="Target node">
+              </el-col>
+              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
+                <el-form-item label="Target node">
                 <el-select v-model="target" placeholder="Select">
                   <el-option
                     v-for="item in graph.nodes"
@@ -54,6 +62,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
+              </el-col>
               <el-form-item>
                 <el-button @click="AggiungiLink()">Aggiungi</el-button>
               </el-form-item>
@@ -61,7 +70,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :lg="12" :md="24" :sm="24" :xl="12" :xs="24">
+          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
             <h2>Links</h2>
             <el-table :data="graph.edges">
               <el-table-column label="Source" prop="source"/>
@@ -70,7 +79,7 @@
           </el-col>
         </el-row>
       </el-col>
-      <el-col :lg="12" :md="24" :sm="24" :xl="12" :xs="24">
+      <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
         <v-network-graph
           :edges="edges"
           :nodes="nodi"
@@ -132,15 +141,8 @@ export default class Home extends Vue {
     );
     this.graph.creaNodi(this.nodi);
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  onSubmit():void {
-    console.log('submit!');
-  }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 h3 {
   margin: 40px 0 0;
