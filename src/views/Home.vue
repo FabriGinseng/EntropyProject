@@ -37,7 +37,7 @@
                     v-for="item in graph.nodes"
                     :key="item.name"
                     :label="item.descrizione"
-                    :value="item.descrizione"
+                    :value="item.name"
                   >
                   </el-option>
                 </el-select>
@@ -49,7 +49,7 @@
                     v-for="item in graph.nodes"
                     :key="item.name"
                     :label="item.descrizione"
-                    :value="item.descrizione"
+                    :value="item.name"
                   >
                   </el-option>
                 </el-select>
