@@ -85,6 +85,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Map from '@/Classes/Map';
+import { emptyProps } from 'element-plus';
 
 @Options({
   props: {
@@ -121,6 +122,7 @@ export default class Home extends Vue {
       },
     );
     this.graph.creaLink(this.edges);
+    this.graph.calcolaPesiNodo();
   }
 
   AggiungiNodo() {
@@ -128,6 +130,8 @@ export default class Home extends Vue {
       {
         name: this.descrizioneNodo,
         descrizione: this.nomeNodo,
+        link: [],
+        pesoLink: 0,
       },
     );
     this.graph.creaNodi(this.nodi);
