@@ -105,41 +105,24 @@ import { reactive } from 'vue';
   components: {},
 })
 export default class Home extends Vue {
+  msg!: string;
+
+  nomeNodo = '';
+
+  descrizioneNodo = '';
+
+  nodi = {};
+
+  edges = {};
+
+  source = '';
+
+  target = '';
+
+  countName = 0;
+
   configs = reactive({
-    node: {
-      normal: {
-        color: '#4466cc88',
-      },
-    },
     edge: {
-      selectable: true,
-      normal: {
-        width: 3,
-        color: '#4466cc',
-        dasharray: '0',
-        linecap: 'butt',
-        animate: false,
-        animationSpeed: 50,
-      },
-      hover: {
-        width: 4,
-        color: '#3355bb',
-        dasharray: '0',
-        linecap: 'butt',
-        animate: false,
-        animationSpeed: 50,
-      },
-      selected: {
-        width: 3,
-        color: '#dd8800',
-        dasharray: '6',
-        linecap: 'round',
-        animate: false,
-        animationSpeed: 50,
-      },
-      gap: 5,
-      type: 'straight',
-      margin: 2,
       marker: {
         source: {
           type: 'none',
@@ -159,23 +142,7 @@ export default class Home extends Vue {
         },
       },
     },
-  })
-
-  msg!: string;
-
-  nomeNodo = '';
-
-  descrizioneNodo = '';
-
-  nodi = {};
-
-  edges = {};
-
-  source = '';
-
-  target = '';
-
-  countName = 0;
+  });
 
   public graph: Map = new Map();
 
@@ -191,7 +158,7 @@ export default class Home extends Vue {
     this.graph.creaLink(this.edges);
     this.graph.calcolaPesiNodo();
     this.graph.calcolaEntropiaNodoEntrata();
-    console.log(this.graph.nodes);
+    console.log(this.graph);
   }
 
   AggiungiNodo():void {
