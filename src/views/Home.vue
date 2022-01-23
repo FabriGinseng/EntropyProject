@@ -95,8 +95,8 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Map from '@/Classes/Map';
 import { reactive } from 'vue';
+import Map from '@/Classes/Map';
 
 @Options({
   props: {
