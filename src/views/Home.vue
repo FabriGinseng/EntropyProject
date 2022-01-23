@@ -84,6 +84,7 @@
         <v-network-graph
           :edges="edges"
           :nodes="nodi"
+          :config="configs"
         />
       </el-col>
     </el-row>
@@ -95,7 +96,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Map from '@/Classes/Map';
-import { emptyProps } from 'element-plus';
+import { reactive } from 'vue';
 
 @Options({
   props: {
@@ -104,6 +105,62 @@ import { emptyProps } from 'element-plus';
   components: {},
 })
 export default class Home extends Vue {
+  configs = reactive({
+    node: {
+      normal: {
+        color: '#4466cc88',
+      },
+    },
+    edge: {
+      selectable: true,
+      normal: {
+        width: 3,
+        color: '#4466cc',
+        dasharray: '0',
+        linecap: 'butt',
+        animate: false,
+        animationSpeed: 50,
+      },
+      hover: {
+        width: 4,
+        color: '#3355bb',
+        dasharray: '0',
+        linecap: 'butt',
+        animate: false,
+        animationSpeed: 50,
+      },
+      selected: {
+        width: 3,
+        color: '#dd8800',
+        dasharray: '6',
+        linecap: 'round',
+        animate: false,
+        animationSpeed: 50,
+      },
+      gap: 5,
+      type: 'straight',
+      margin: 2,
+      marker: {
+        source: {
+          type: 'none',
+          width: 4,
+          height: 4,
+          margin: -1,
+          units: 'strokeWidth',
+          color: null,
+        },
+        target: {
+          type: 'arrow',
+          width: 4,
+          height: 4,
+          margin: -1,
+          units: 'strokeWidth',
+          color: null,
+        },
+      },
+    },
+  })
+
   msg!: string;
 
   nomeNodo = '';
