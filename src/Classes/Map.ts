@@ -3,6 +3,7 @@ interface Node{
   descrizione:string;
   link:Array<string>;
   pesoLink:number;
+  entropia:number;
 }
 
 interface Edge {
@@ -16,9 +17,12 @@ export default class Map {
 
   edges: Edge[];
 
+  entropia: number;
+
   constructor() {
     this.nodes = [];
     this.edges = [];
+    this.entropia = 0;
   }
 
   public creaNodi(nodeResponse:any):void {
@@ -48,5 +52,45 @@ export default class Map {
       if (node.link !== undefined) node.pesoLink = 1 / node.link.length;
     });
     console.log(this.nodes);
+  }
+
+  public calcolaEntropiaNodoUscita():void {
+    this.nodes.forEach((node) => {
+      if (node.link !== undefined && node.link.length > 0) {
+        const entropia = -1 * (node.link.length * (node.pesoLink * (Math.log2(node.pesoLink))));
+        // eslint-disable-next-line no-param-reassign
+        node.entropia = entropia;
+      }
+    });
+  }
+
+  public calcolaEntropiaNodoEntrata():void {
+    this.nodes.forEach((node) => {
+      const link:number[] = [];
+      this.nodes.forEach((nodeEnter:Node) => {
+        if (nodeEnter.link !== undefined && nodeEnter.link.length > 0) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const i of nodeEnter.link) {
+            if (i === node.name) {
+              link.push(nodeEnter.pesoLink * (Math.log2(nodeEnter.pesoLink)));
+              // eslint-disable-next-line no-param-reassign
+              break;
+            }
+          }
+          // eslint-disable-next-line no-param-reassign,no-restricted-syntax
+          for (const y of link) node.entropia += y;
+          // eslint-disable-next-line no-param-reassign
+          node.entropia *= -1;
+        }
+      });
+      this.entropiaGrafo();
+    });
+  }
+
+  private entropiaGrafo():void {
+    this.entropia = 0;
+    this.nodes.forEach((node) => {
+      this.entropia += node.entropia;
+    });
   }
 }
