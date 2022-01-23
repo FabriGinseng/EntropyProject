@@ -123,6 +123,8 @@ export default class Home extends Vue {
     );
     this.graph.creaLink(this.edges);
     this.graph.calcolaPesiNodo();
+    this.graph.calcolaEntropiaNodoEntrata();
+    console.log(this.graph.nodes);
   }
 
   AggiungiNodo() {
@@ -132,6 +134,7 @@ export default class Home extends Vue {
         descrizione: this.nomeNodo,
         link: [],
         pesoLink: 0,
+        entropia: 0,
       },
     );
     this.graph.creaNodi(this.nodi);
