@@ -2,12 +2,12 @@
   <el-main>
     <el-row>
       <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
-
+        <h1>CREATE YOUR MIND MAP</h1>
         <el-row>
+          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
           <el-card>
-            <h2>AGGIUNGI NODI</h2>
-            <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
-              <el-form ref="formRef" label-position="top" label-width="150px">
+            <h2>ADD NODES</h2>
+            <el-form ref="formRef" label-position="top" label-width="150px">
                 <el-form-item label="Nome nodo">
                   <el-input v-model="nomeNodo"></el-input>
                 </el-form-item>
@@ -18,18 +18,19 @@
                   <el-button @click="AggiungiNodo()">Aggiungi</el-button>
                 </el-form-item>
               </el-form>
-            </el-col>
           </el-card>
-
+          </el-col>
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
-            <h2>Nodes</h2>
-            <el-table :data="graph.nodes">
-              <el-table-column label="Nome" prop="descrizione"/>
-              <el-table-column label="Descrizione" prop="name"/>
-            </el-table>
+          <el-card>
+              <h2>NODES ADDED</h2>
+              <el-table :data="graph.nodes">
+                <el-table-column label="Nome" prop="descrizione"/>
+                <el-table-column label="Descrizione" prop="name"/>
+              </el-table>
+          </el-card>
           </el-col>
         </el-row>
         <el-divider border-style="double"></el-divider>
