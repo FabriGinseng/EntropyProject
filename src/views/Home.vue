@@ -1,8 +1,8 @@
 <template>
   <el-main>
+    <h1>CREATE YOUR MIND MAP</h1>
     <el-row>
-      <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
-        <h1>CREATE YOUR MIND MAP</h1>
+      <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
           <el-card>
@@ -23,69 +23,91 @@
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
+
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
           <el-card>
-              <h2>NODES ADDED</h2>
+              <h2>NODES</h2>
               <el-table :data="graph.nodes">
                 <el-table-column label="Nome" prop="descrizione"/>
                 <el-table-column label="Descrizione" prop="name"/>
+                <el-table-column label="Entropia" prop="entropia"/>
               </el-table>
           </el-card>
           </el-col>
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
-          <h2>AGGIUNGI ARCHI</h2>
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
-            <el-form ref="formRef" label-position="left">
-              <el-col :lg="12" :md="24" :sm="24" :xl="12" :xs="12">
-              <el-form-item label="Start node">
-                <el-select v-model="source"  placeholder="Select">
-                  <el-option
-                    v-for="item in graph.nodes"
-                    :key="item.name"
-                    :label="item.descrizione"
-                    :value="item.name"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
-                <el-form-item label="Target node">
-                <el-select v-model="target" placeholder="Select">
-                  <el-option
-                    v-for="item in graph.nodes"
-                    :key="item.name"
-                    :label="item.descrizione"
-                    :value="item.name"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              </el-col>
+          <el-card>
+            <h2>ADD LINKS</h2>
+
+            <el-form ref="formRef" label-position="left" :inline="true">
+              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
+                  <el-form-item label="Start node">
+                    <el-select v-model="source"  placeholder="Select">
+                      <el-option
+                        v-for="item in graph.nodes"
+                        :key="item.name"
+                        :label="item.descrizione"
+                        :value="item.name"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
+                  <el-form-item label="Target node">
+                    <el-select v-model="target" placeholder="Select">
+                      <el-option
+                        v-for="item in graph.nodes"
+                        :key="item.name"
+                        :label="item.descrizione"
+                        :value="item.name"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
               <el-form-item>
-                <el-button @click="AggiungiLink()">Aggiungi</el-button>
-              </el-form-item>
-            </el-form>
+                  <el-button @click="AggiungiLink()">Aggiungi</el-button>
+                </el-form-item>
+              </el-col>
+              </el-form>
+          </el-card>
+          </el-col>
+        </el-row>
+        <el-divider border-style="double"></el-divider>
+        <el-row>
+          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+          <el-card>
+              <h2>Links</h2>
+              <el-table :data="graph.edges">
+                <el-table-column label="Source" prop="source"/>
+                <el-table-column label="Target" prop="target"/>
+              </el-table>
+          </el-card>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+        <el-row>
+          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+            <el-card header="ENTROPY">
+              <label>IL GRAFO HA UN' ENTROPIA TOTALE: {{entropia}} </label>
+            </el-card>
           </el-col>
         </el-row>
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
-            <h2>Links</h2>
-            <el-table :data="graph.edges">
-              <el-table-column label="Source" prop="source"/>
-              <el-table-column label="Target" prop="target"/>
-            </el-table>
+            <el-card header="MIND MAP">
+              <GraphComponent
+                style="height: 860px"
+                :edges="edges"
+                :nodes="nodes"/>
+            </el-card>
           </el-col>
         </el-row>
-      </el-col>
-      <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
-        <v-network-graph
-          :edges="edges"
-          :nodes="nodi"
-          :config="configs"
-        />
       </el-col>
     </el-row>
 
@@ -95,54 +117,35 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { reactive } from 'vue';
 import Map from '@/Classes/Map';
+import GraphComponent from '@/components/GraphComponent.vue';
 
 @Options({
   props: {
     msg: String,
   },
-  components: {},
+  components: { GraphComponent },
 })
 export default class Home extends Vue {
+  entropia = 0;
+
   msg!: string;
 
   nomeNodo = '';
 
   descrizioneNodo = '';
 
-  nodi = {};
+  x = 0;
 
-  edges = {};
+  nodes:any = {};
+
+  edges:any = {};
 
   source = '';
 
   target = '';
 
   countName = 0;
-
-  configs = reactive({
-    edge: {
-      marker: {
-        source: {
-          type: 'none',
-          width: 4,
-          height: 4,
-          margin: -1,
-          units: 'strokeWidth',
-          color: null,
-        },
-        target: {
-          type: 'arrow',
-          width: 4,
-          height: 4,
-          margin: -1,
-          units: 'strokeWidth',
-          color: null,
-        },
-      },
-    },
-  });
 
   public graph: Map = new Map();
 
@@ -153,15 +156,20 @@ export default class Home extends Vue {
         name: `Link ${this.countName++}`,
         source: this.source,
         target: this.target,
+        label: 'peso',
+        peso: 0,
       },
     );
     this.graph.creaLink(this.edges);
-    this.graph.calcolaPesiNodo();
+    this.graph.calcolaPesiNodo(this.edges);
     this.graph.calcolaEntropiaNodoEntrata();
-    console.log(this.graph);
+    this.entropia = this.graph.entropiaGrafo();
   }
 
   AggiungiNodo():void {
+    const Y = this.x + 50;
+    // eslint-disable-next-line prefer-const
+    this.x += 50;
     this.graph.nodes.push(
       {
         name: this.descrizioneNodo,
@@ -169,12 +177,15 @@ export default class Home extends Vue {
         link: [],
         pesoLink: 0,
         entropia: 0,
+        x: this.x,
+        y: Y,
       },
     );
-    this.graph.creaNodi(this.nodi);
+    this.graph.creaNodi(this.nodes);
   }
 }
 </script>
+
 <style lang="scss" scoped>
 h3 {
   margin: 40px 0 0;

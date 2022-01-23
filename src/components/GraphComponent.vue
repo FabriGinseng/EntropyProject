@@ -3,12 +3,21 @@
     :nodes="nodes"
     :edges="edges"
     :configs="configs"
-  />
+  >
+  <template #edge-label="{ edge, ...slotProps }">
+    <v-edge-label
+      :text="edge.label"
+      align="center"
+      :vertical-align="verticalAlign"
+      v-bind="slotProps"
+    />
+  </template>
+  </v-network-graph>
 </template>
 
 <script>
-import { Options } from 'vue-class-component';
-import { defineComponent, reactive } from 'vue';
+import { Options, Vue } from 'vue-class-component';
+import { reactive, ref } from 'vue';
 
 @Options({
   props: {
@@ -17,23 +26,31 @@ import { defineComponent, reactive } from 'vue';
   },
   components: {},
 })
-export default defineComponent({
-  setup() {
-    const configs = reactive({
+export default class Home extends Vue {
+   verticalAlign = ref('above');
+
+    configs = reactive({
       node: {
         normal: {
           color: '#4466cc88',
         },
       },
       edge: {
-        selectable: true,
-        normal: {
-          width: 3,
-          color: '#4466cc',
-          dasharray: '0',
-          linecap: 'butt',
-          animate: false,
-          animationSpeed: 50,
+        label: {
+          fontFamily: undefined,
+          fontSize: 11,
+          lineHeight: 1.1,
+          color: '#000000',
+          margin: 4,
+          background: {
+            visible: true,
+            color: '#ffffff',
+            padding: {
+              vertical: 1,
+              horizontal: 4,
+            },
+            borderRadius: 2,
+          },
         },
         hover: {
           width: 4,
@@ -52,7 +69,7 @@ export default defineComponent({
           animationSpeed: 50,
         },
         gap: 5,
-        type: 'straight',
+        type: 'curve',
         margin: 2,
         marker: {
           source: {
@@ -74,10 +91,7 @@ export default defineComponent({
         },
       },
     });
-
-    return { configs };
-  },
-});
+}
 </script>
 
 <style scoped>

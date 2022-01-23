@@ -4,12 +4,16 @@ interface Node{
   link:Array<string>;
   pesoLink:number;
   entropia:number;
+  x: number;
+  y: number;
 }
 
 interface Edge {
   name:string;
   source:string;
   target:string;
+  label:string
+  peso:number
 }
 
 export default class Map {
@@ -28,30 +32,43 @@ export default class Map {
   public creaNodi(nodeResponse:any):void {
     this.nodes.forEach((node) => {
       // eslint-disable-next-line no-param-reassign
-      nodeResponse[node.name] = { name: node.descrizione };
+      nodeResponse[node.name] = { name: node.descrizione, x: node.x, y: node.y };
     });
   }
 
   public creaLink(response:any):void {
     this.edges.forEach((edge) => {
       // eslint-disable-next-line no-param-reassign
-      response[edge.name] = { source: edge.source, target: edge.target };
+      response[edge.name] = {
+        source: edge.source, target: edge.target, label: edge.label + edge.peso, peso: 0,
+      };
     });
   }
 
-  public calcolaPesiNodo():void {
-    const edges:any = [];
+  public calcolaPesiNodo(response:any):void {
+    // eslint-disable-next-line no-underscore-dangle
+    const _edges:any = [];
     this.edges.forEach((edge) => {
-      if (edges[edge.source] === undefined) edges[edge.source] = [];
-      edges[edge.source].push(edge.target);
+      if (_edges[edge.source] === undefined) _edges[edge.source] = [];
+      _edges[edge.source].push(edge.target);
     });
     this.nodes.forEach((node) => {
       // eslint-disable-next-line no-param-reassign
-      node.link = edges[node.name];
+      node.link = _edges[node.name];
       // eslint-disable-next-line no-param-reassign
       if (node.link !== undefined) node.pesoLink = 1 / node.link.length;
+      this.edges.forEach((edge) => {
+        // eslint-disable-next-line no-param-reassign
+        if (edge.source === node.name) {
+          // eslint-disable-next-line no-param-reassign
+          edge.peso = node.pesoLink;
+        }
+        // eslint-disable-next-line no-param-reassign
+        response[edge.name] = {
+          source: edge.source, target: edge.target, label: `${edge.label} ${edge.peso}`, peso: edge.peso,
+        };
+      });
     });
-    console.log(this.nodes);
   }
 
   public calcolaEntropiaNodoUscita():void {
@@ -78,19 +95,21 @@ export default class Map {
             }
           }
           // eslint-disable-next-line no-param-reassign,no-restricted-syntax
+          node.entropia = 0;
+          // eslint-disable-next-line no-param-reassign,no-restricted-syntax
           for (const y of link) node.entropia += y;
           // eslint-disable-next-line no-param-reassign
           node.entropia *= -1;
         }
       });
-      this.entropiaGrafo();
     });
   }
 
-  private entropiaGrafo():void {
+  public entropiaGrafo():number {
     this.entropia = 0;
     this.nodes.forEach((node) => {
       this.entropia += node.entropia;
     });
+    return this.entropia;
   }
 }
