@@ -74,6 +74,7 @@
         <v-network-graph
           :edges="edges"
           :nodes="nodi"
+          :configs="configs"
         />
       </el-col>
     </el-row>
@@ -86,6 +87,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Map from '@/Classes/Map';
 import { emptyProps } from 'element-plus';
+import { reactive } from 'vue';
 
 @Options({
   props: {
@@ -110,6 +112,29 @@ export default class Home extends Vue {
 
   countName = 0;
 
+  configs = reactive({
+    edge: {
+      marker: {
+        source: {
+          type: 'none',
+          width: 4,
+          height: 4,
+          margin: -1,
+          units: 'strokeWidth',
+          color: null,
+        },
+        target: {
+          type: 'arrow',
+          width: 4,
+          height: 4,
+          margin: -1,
+          units: 'strokeWidth',
+          color: null,
+        },
+      },
+    },
+  });
+
   public graph: Map = new Map();
 
   AggiungiLink() {
@@ -124,7 +149,7 @@ export default class Home extends Vue {
     this.graph.creaLink(this.edges);
     this.graph.calcolaPesiNodo();
     this.graph.calcolaEntropiaNodoEntrata();
-    console.log(this.graph.nodes);
+    console.log(this.graph);
   }
 
   AggiungiNodo() {
