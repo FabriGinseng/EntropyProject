@@ -24,6 +24,7 @@
             <el-table :data="graph.nodes">
               <el-table-column label="Nome" prop="descrizione"/>
               <el-table-column label="Descrizione" prop="name"/>
+              <el-table-column label="Entropia" prop="entropia"/>
             </el-table>
           </el-col>
         </el-row>

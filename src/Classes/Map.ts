@@ -78,6 +78,8 @@ export default class Map {
             }
           }
           // eslint-disable-next-line no-param-reassign,no-restricted-syntax
+          node.entropia = 0;
+          // eslint-disable-next-line no-param-reassign,no-restricted-syntax
           for (const y of link) node.entropia += y;
           // eslint-disable-next-line no-param-reassign
           node.entropia *= -1;
