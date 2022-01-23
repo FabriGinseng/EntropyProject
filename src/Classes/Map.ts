@@ -17,9 +17,12 @@ export default class Map {
 
   edges: Edge[];
 
+  entropia: number;
+
   constructor() {
     this.nodes = [];
     this.edges = [];
+    this.entropia = 0;
   }
 
   public creaNodi(nodeResponse:any):void {
@@ -80,6 +83,14 @@ export default class Map {
           node.entropia *= -1;
         }
       });
+      this.entropiaGrafo();
+    });
+  }
+
+  private entropiaGrafo():void {
+    this.entropia = 0;
+    this.nodes.forEach((node) => {
+      this.entropia += node.entropia;
     });
   }
 }
