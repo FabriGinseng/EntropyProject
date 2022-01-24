@@ -1,21 +1,21 @@
 <template>
   <el-main>
     <h1>CREATE YOUR MIND MAP</h1>
-    <el-row>
+    <el-row :gutter="10">
       <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
           <el-card>
             <h2>ADD NODES</h2>
             <el-form ref="formRef" label-position="top" label-width="150px">
-                <el-form-item label="Nome nodo">
+                <el-form-item label="Name">
                   <el-input v-model="nomeNodo"></el-input>
                 </el-form-item>
-                <el-form-item label="Descrizione nodo">
+                <el-form-item label="Description">
                   <el-input v-model="descrizioneNodo" type="textarea"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button @click="AggiungiNodo()">Aggiungi</el-button>
+                  <el-button @click="AddNode()">ADD</el-button>
                 </el-form-item>
               </el-form>
           </el-card>
@@ -23,14 +23,13 @@
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
-
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
           <el-card>
               <h2>NODES</h2>
               <el-table :data="graph.nodes">
-                <el-table-column label="Nome" prop="descrizione"/>
-                <el-table-column label="Descrizione" prop="name"/>
-                <el-table-column label="Entropia" prop="entropia"/>
+                <el-table-column label="Name" prop="description"/>
+                <el-table-column label="Description" prop="name"/>
+                <!--<el-table-column label="Entropia" prop="entropy"/>-->
               </el-table>
           </el-card>
           </el-col>
@@ -48,7 +47,7 @@
                       <el-option
                         v-for="item in graph.nodes"
                         :key="item.name"
-                        :label="item.descrizione"
+                        :label="item.description"
                         :value="item.name"
                       >
                       </el-option>
@@ -61,7 +60,7 @@
                       <el-option
                         v-for="item in graph.nodes"
                         :key="item.name"
-                        :label="item.descrizione"
+                        :label="item.description"
                         :value="item.name"
                       >
                       </el-option>
@@ -70,7 +69,7 @@
                 </el-col>
               <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
               <el-form-item>
-                  <el-button @click="AggiungiLink()">Aggiungi</el-button>
+                  <el-button @click="AddLink()">ADD</el-button>
                 </el-form-item>
               </el-col>
               </el-form>
@@ -94,25 +93,26 @@
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
             <el-card header="ENTROPY">
-              <label>IL GRAFO HA UN' ENTROPIA TOTALE: {{entropia}} </label>
+              <label>ENTROPIA TOTALE: {{graph.entropy}} </label>
             </el-card>
           </el-col>
         </el-row>
+        <el-divider border-style="double"/>
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+            <el-space wrap>
             <el-card header="MIND MAP">
               <GraphComponent
-                style="height: 860px"
+                style="height: 810px"
                 :edges="edges"
                 :nodes="nodes"/>
             </el-card>
+            </el-space>
           </el-col>
         </el-row>
       </el-col>
     </el-row>
-
   </el-main>
-
 </template>
 
 <script lang="ts">
@@ -127,8 +127,6 @@ import GraphComponent from '@/components/GraphComponent.vue';
   components: { GraphComponent },
 })
 export default class Home extends Vue {
-  entropia = 0;
-
   msg!: string;
 
   nomeNodo = '';
@@ -137,9 +135,9 @@ export default class Home extends Vue {
 
   x = 0;
 
-  nodes:any = {};
+  nodes = {};
 
-  edges:any = {};
+  edges = {};
 
   source = '';
 
@@ -149,7 +147,7 @@ export default class Home extends Vue {
 
   public graph: Map = new Map();
 
-  AggiungiLink():void {
+  AddLink():void {
     this.graph.edges.push(
       {
         // eslint-disable-next-line no-plusplus
@@ -157,23 +155,22 @@ export default class Home extends Vue {
         source: this.source,
         target: this.target,
         label: 'peso',
-        peso: 0,
+        weight: 0,
       },
     );
-    this.graph.creaLink(this.edges);
-    this.graph.calcolaPesiNodo(this.edges);
-    this.graph.calcolaEntropiaNodoEntrata();
-    this.entropia = this.graph.entropiaGrafo();
+    this.graph.CreateLinks(this.edges);
+    this.graph.CalculateWeight(this.edges);
+    this.graph.CalculateEntropy();
   }
 
-  AggiungiNodo():void {
+  AddNode():void {
     const Y = this.x + 50;
     // eslint-disable-next-line prefer-const
     this.x += 50;
     this.graph.nodes.push(
       {
         name: this.descrizioneNodo,
-        descrizione: this.nomeNodo,
+        description: this.nomeNodo,
         link: [],
         pesoLink: 0,
         entropia: 0,
@@ -181,7 +178,7 @@ export default class Home extends Vue {
         y: Y,
       },
     );
-    this.graph.creaNodi(this.nodes);
+    this.graph.CreateNodes(this.nodes);
   }
 }
 </script>

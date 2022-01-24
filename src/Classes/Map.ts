@@ -1,6 +1,6 @@
 interface Node{
   name:string;
-  descrizione:string;
+  description:string;
   link:Array<string>;
   pesoLink:number;
   entropia:number;
@@ -13,75 +13,68 @@ interface Edge {
   source:string;
   target:string;
   label:string
-  peso:number
+  weight:number
 }
 
 export default class Map {
   nodes: Node[];
-
   edges: Edge[];
-
-  entropia: number;
+  entropy: number;
 
   constructor() {
     this.nodes = [];
     this.edges = [];
-    this.entropia = 0;
+    this.entropy = 0;
   }
 
-  public creaNodi(nodeResponse:any):void {
+  public CreateNodes(nodesList:any):void {
     this.nodes.forEach((node) => {
       // eslint-disable-next-line no-param-reassign
-      nodeResponse[node.name] = { name: node.descrizione, x: node.x, y: node.y };
+      nodesList[node.name] = { name: node.description, x: node.x, y: node.y };
     });
   }
 
-  public creaLink(response:any):void {
+  public CreateLinks(linkList:any):void {
     this.edges.forEach((edge) => {
       // eslint-disable-next-line no-param-reassign
-      response[edge.name] = {
-        source: edge.source, target: edge.target, label: edge.label + edge.peso, peso: 0,
+      linkList[edge.name] = {
+        source: edge.source, target: edge.target, label: edge.label + edge.weight, peso: 0,
       };
     });
   }
 
-  public calcolaPesiNodo(response:any):void {
-    // eslint-disable-next-line no-underscore-dangle
+  public CalculateWeight(listEdges:any):void {
     const _edges:any = [];
     this.edges.forEach((edge) => {
       if (_edges[edge.source] === undefined) _edges[edge.source] = [];
       _edges[edge.source].push(edge.target);
     });
     this.nodes.forEach((node) => {
-      // eslint-disable-next-line no-param-reassign
       node.link = _edges[node.name];
-      // eslint-disable-next-line no-param-reassign
       if (node.link !== undefined) node.pesoLink = 1 / node.link.length;
       this.edges.forEach((edge) => {
-        // eslint-disable-next-line no-param-reassign
         if (edge.source === node.name) {
-          // eslint-disable-next-line no-param-reassign
-          edge.peso = node.pesoLink;
+          edge.weight = node.pesoLink;
         }
-        // eslint-disable-next-line no-param-reassign
-        response[edge.name] = {
-          source: edge.source, target: edge.target, label: `${edge.label} ${edge.peso}`, peso: edge.peso,
+        listEdges[edge.name] = {
+          source: edge.source, target: edge.target, label: `${edge.label} ${edge.weight}`, peso: edge.weight,
         };
       });
     });
   }
 
+  /*
   public calcolaEntropiaNodoUscita():void {
     this.nodes.forEach((node) => {
       if (node.link !== undefined && node.link.length > 0) {
-        const entropia = -1 * (node.link.length * (node.pesoLink * (Math.log2(node.pesoLink))));
+        const entropy = -1 * (node.link.length * (node.pesoLink * (Math.log2(node.pesoLink))));
         // eslint-disable-next-line no-param-reassign
-        node.entropia = entropia;
+        node.entropy = entropy;
       }
     });
-  }
+  }*/
 
-  public calcolaEntropiaNodoEntrata():void {
+  public CalculateEntropy():void {
     this.nodes.forEach((node) => {
       const link:number[] = [];
       this.nodes.forEach((nodeEnter:Node) => {
@@ -102,14 +95,15 @@ export default class Map {
           node.entropia *= -1;
         }
       });
+      this.GraphEntropy();
     });
   }
 
-  public entropiaGrafo():number {
-    this.entropia = 0;
+  private GraphEntropy():number {
+    this.entropy = 0;
     this.nodes.forEach((node) => {
-      this.entropia += node.entropia;
+      this.entropy += node.entropia;
     });
-    return this.entropia;
+    return this.entropy;
   }
 }
