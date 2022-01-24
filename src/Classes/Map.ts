@@ -29,14 +29,12 @@ export default class Map {
 
   public CreateNodes(nodesList:any):void {
     this.nodes.forEach((node) => {
-      // eslint-disable-next-line no-param-reassign
       nodesList[node.name] = { name: node.description, x: node.x, y: node.y };
     });
   }
 
   public CreateLinks(linkList:any):void {
     this.edges.forEach((edge) => {
-      // eslint-disable-next-line no-param-reassign
       linkList[edge.name] = {
         source: edge.source, target: edge.target, label: edge.label + edge.weight, peso: 0,
       };
@@ -79,19 +77,14 @@ export default class Map {
       const link:number[] = [];
       this.nodes.forEach((nodeEnter:Node) => {
         if (nodeEnter.link !== undefined && nodeEnter.link.length > 0) {
-          // eslint-disable-next-line no-restricted-syntax
           for (const i of nodeEnter.link) {
             if (i === node.name) {
               link.push(nodeEnter.pesoLink * (Math.log2(nodeEnter.pesoLink)));
-              // eslint-disable-next-line no-param-reassign
               break;
             }
           }
-          // eslint-disable-next-line no-param-reassign,no-restricted-syntax
-          node.entropia = 0;
-          // eslint-disable-next-line no-param-reassign,no-restricted-syntax
+           node.entropia = 0;
           for (const y of link) node.entropia += y;
-          // eslint-disable-next-line no-param-reassign
           node.entropia *= -1;
         }
       });

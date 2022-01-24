@@ -121,13 +121,9 @@ import Map from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
 
 @Options({
-  props: {
-    msg: String,
-  },
   components: { GraphComponent },
 })
 export default class Home extends Vue {
-  msg!: string;
 
   nomeNodo = '';
 
@@ -165,7 +161,6 @@ export default class Home extends Vue {
 
   AddNode():void {
     const Y = this.x + 50;
-    // eslint-disable-next-line prefer-const
     this.x += 50;
     this.graph.nodes.push(
       {
