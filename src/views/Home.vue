@@ -7,12 +7,12 @@
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
           <el-card>
             <h2>ADD NODES</h2>
-            <el-form ref="formRef" label-position="top" label-width="150px">
-                <el-form-item label="Name">
-                  <el-input v-model="nodeName"></el-input>
+            <el-form ref="formNodes" :model="formNode" label-position="top"  label-width="150px">
+                <el-form-item label="Name" prop="nodeName"  required>
+                  <el-input v-model="formNode.nodeName"></el-input>
                 </el-form-item>
-                <el-form-item label="Description">
-                  <el-input v-model="nodeDescription" type="textarea"></el-input>
+                <el-form-item label="Description" prop="nodeDescription" required>
+                  <el-input v-model="formNode.nodeDescription" type="textarea"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button @click="AddNode()">ADD</el-button>
@@ -27,8 +27,8 @@
           <el-card>
               <h2>NODES</h2>
               <el-table :data="graph.nodes">
-                <el-table-column label="Name" prop="description"/>
-                <el-table-column label="Description" prop="name"/>
+                <el-table-column label="Name" prop="name"/>
+                <el-table-column label="Description" prop="description"/>
                 <!--<el-table-column label="Entropia" prop="entropy"/>-->
               </el-table>
           </el-card>
@@ -39,15 +39,15 @@
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
           <el-card>
             <h2>ADD LINKS</h2>
-
-            <el-form ref="formRef" label-position="left" :inline="true">
+            <el-form ref="formRef" label-position="left" :inline="true"
+                     :disabled="graph.nodes.length < 2">
               <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
                   <el-form-item label="Start node">
                     <el-select v-model="source"  placeholder="Select">
                       <el-option
                         v-for="item in graph.nodes"
                         :key="item.name"
-                        :label="item.description"
+                        :label="item.name"
                         :value="item.name"
                       >
                       </el-option>
@@ -59,8 +59,9 @@
                     <el-select v-model="target" placeholder="Select">
                       <el-option
                         v-for="item in graph.nodes"
+                        :disabled="item.name === source"
                         :key="item.name"
-                        :label="item.description"
+                        :label="item.name"
                         :value="item.name"
                       >
                       </el-option>
@@ -124,12 +125,14 @@ import GraphComponent from '@/components/GraphComponent.vue';
   components: { GraphComponent },
 })
 export default class Home extends Vue {
-
-  nodeName = '';
-
-  nodeDescription = '';
+  formNode = {
+    nodeName: '',
+    nodeDescription: '',
+  }
 
   x = 0;
+
+  i = 0;
 
   nodes = {};
 
@@ -160,20 +163,30 @@ export default class Home extends Vue {
   }
 
   AddNode():void {
-    const Y = this.x + 50;
-    this.x += 50;
-    this.graph.nodes.push(
-      {
-        name: this.nodeDescription,
-        description: this.nodeName,
-        link: [],
-        linkWeight: 0,
-        entropy: 0,
-        x: this.x,
-        y: Y,
-      },
-    );
-    this.graph.CreateNodes(this.nodes);
+    const formRef = this.$refs.formNodes as any;
+
+    formRef.validate(async (valid: boolean) => {
+      if (valid) {
+        const Y = this.x + 50;
+        this.x += 50;
+        this.i += 1;
+        this.graph.nodes.push(
+          {
+            name: this.formNode.nodeName,
+            description: this.formNode.nodeDescription,
+            index: this.i,
+            links: [],
+            linkWeight: 0,
+            entropy: 0,
+            x: this.x,
+            y: Y,
+          },
+        );
+        this.graph.CreateNodes(this.nodes);
+        this.formNode.nodeDescription = '';
+        this.formNode.nodeName = '';
+      }
+    });
   }
 }
 </script>
