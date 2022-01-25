@@ -9,10 +9,10 @@
             <h2>ADD NODES</h2>
             <el-form ref="formRef" label-position="top" label-width="150px">
                 <el-form-item label="Name">
-                  <el-input v-model="nomeNodo"></el-input>
+                  <el-input v-model="nodeName"></el-input>
                 </el-form-item>
                 <el-form-item label="Description">
-                  <el-input v-model="descrizioneNodo" type="textarea"></el-input>
+                  <el-input v-model="nodeDescription" type="textarea"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button @click="AddNode()">ADD</el-button>
@@ -93,7 +93,7 @@
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
             <el-card header="ENTROPY">
-              <label>ENTROPIA TOTALE: {{graph.entropy}} </label>
+              <label>ENTROPIA TOTALE: {{ graph.totalEntropy }} </label>
             </el-card>
           </el-col>
         </el-row>
@@ -125,9 +125,9 @@ import GraphComponent from '@/components/GraphComponent.vue';
 })
 export default class Home extends Vue {
 
-  nomeNodo = '';
+  nodeName = '';
 
-  descrizioneNodo = '';
+  nodeDescription = '';
 
   x = 0;
 
@@ -150,7 +150,7 @@ export default class Home extends Vue {
         name: `Link ${this.countName++}`,
         source: this.source,
         target: this.target,
-        label: 'peso',
+        label: 'weight',
         weight: 0,
       },
     );
@@ -164,11 +164,11 @@ export default class Home extends Vue {
     this.x += 50;
     this.graph.nodes.push(
       {
-        name: this.descrizioneNodo,
-        description: this.nomeNodo,
+        name: this.nodeDescription,
+        description: this.nodeName,
         link: [],
-        pesoLink: 0,
-        entropia: 0,
+        linkWeight: 0,
+        entropy: 0,
         x: this.x,
         y: Y,
       },

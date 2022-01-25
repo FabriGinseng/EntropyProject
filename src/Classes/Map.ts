@@ -1,9 +1,15 @@
+/**
+ * This interface describes the nodes in the graph
+ * @interface Node
+ * @member name The node name
+ * @
+ */
 interface Node{
   name:string;
   description:string;
   link:Array<string>;
-  pesoLink:number;
-  entropia:number;
+  linkWeight:number;
+  entropy:number;
   x: number;
   y: number;
 }
@@ -19,12 +25,12 @@ interface Edge {
 export default class Map {
   nodes: Node[];
   edges: Edge[];
-  entropy: number;
+  totalEntropy: number;
 
   constructor() {
     this.nodes = [];
     this.edges = [];
-    this.entropy = 0;
+    this.totalEntropy = 0;
   }
 
   public CreateNodes(nodesList:any):void {
@@ -49,10 +55,10 @@ export default class Map {
     });
     this.nodes.forEach((node) => {
       node.link = _edges[node.name];
-      if (node.link !== undefined) node.pesoLink = 1 / node.link.length;
+      if (node.link !== undefined) node.linkWeight = 1 / node.link.length;
       this.edges.forEach((edge) => {
         if (edge.source === node.name) {
-          edge.weight = node.pesoLink;
+          edge.weight = node.linkWeight;
         }
         listEdges[edge.name] = {
           source: edge.source, target: edge.target, label: `${edge.label} ${edge.weight}`, peso: edge.weight,
@@ -79,13 +85,13 @@ export default class Map {
         if (nodeEnter.link !== undefined && nodeEnter.link.length > 0) {
           for (const i of nodeEnter.link) {
             if (i === node.name) {
-              link.push(nodeEnter.pesoLink * (Math.log2(nodeEnter.pesoLink)));
+              link.push(nodeEnter.linkWeight * (Math.log2(nodeEnter.linkWeight)));
               break;
             }
           }
-           node.entropia = 0;
-          for (const y of link) node.entropia += y;
-          node.entropia *= -1;
+           node.entropy = 0;
+          for (const y of link) node.entropy += y;
+          node.entropy *= -1;
         }
       });
       this.GraphEntropy();
@@ -93,10 +99,10 @@ export default class Map {
   }
 
   private GraphEntropy():number {
-    this.entropy = 0;
+    this.totalEntropy = 0;
     this.nodes.forEach((node) => {
-      this.entropy += node.entropia;
+      this.totalEntropy += node.entropy;
     });
-    return this.entropy;
+    return this.totalEntropy;
   }
 }
