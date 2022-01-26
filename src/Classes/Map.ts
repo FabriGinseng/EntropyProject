@@ -123,4 +123,60 @@ export default class Map {
     });
     return this.totalEntropy;
   }
+
+  public CheckCycle(nodeSelected:Node):Node[] {
+    const prova:Node[] = [];
+    const nodiControllo:Node[] = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const i of this.nodes) {
+      let flag = true;
+      if (nodeSelected.links) {
+        for (let z = 0; z < nodeSelected.links.length; z += 1) {
+          const y = nodeSelected.links[z];
+          if (y === i.name) flag = false;
+        }
+      }
+      if (nodeSelected.name === i.name) flag = false;
+
+      if (flag) {
+        if (i.links) {
+          for (let z = 0; z < i.links.length; z += 1) {
+            const y = i.links[z];
+            if (nodeSelected.name === y) {
+              console.log('y', y);
+              nodiControllo.push(i);
+              flag = false;
+              break;
+            }
+          }
+        }
+      }
+      if (flag) prova.push(i);
+    }
+    console.log('p', nodiControllo);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const i of nodiControllo) {
+      const flag = false;
+      // eslint-disable-next-line no-restricted-syntax
+      for (const z of this.nodes) {
+        // eslint-disable-next-line no-restricted-syntax
+        if (z.links !== undefined) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const link of z.links) {
+            if (link === i.name) {
+              // eslint-disable-next-line no-restricted-syntax
+              for (const k in prova) {
+                if (prova[k].name === z.name) {
+                  nodiControllo.push(z);
+                  prova.splice(+k, 1);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    console.log(prova);
+    return prova;
+  }
 }

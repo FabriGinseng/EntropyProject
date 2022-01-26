@@ -43,7 +43,7 @@
                      :disabled="graph.nodes.length < 2">
               <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
                   <el-form-item label="Start node">
-                    <el-select v-model="source"  placeholder="Select">
+                    <el-select v-model="source" @change="SelectSource"  placeholder="Select">
                       <el-option
                         v-for="item in graph.nodes"
                         :key="item.name"
@@ -58,7 +58,7 @@
                   <el-form-item label="Target node">
                     <el-select v-model="target" placeholder="Select">
                       <el-option
-                        v-for="item in graph.nodes"
+                        v-for="item in nodesLink"
                         :disabled="item.name === source"
                         :key="item.name"
                         :label="item.name"
@@ -136,6 +136,8 @@ export default class Home extends Vue {
 
   nodes = {};
 
+  nodesLink = {};
+
   edges = {};
 
   source = '';
@@ -160,6 +162,13 @@ export default class Home extends Vue {
     this.graph.CreateLinks(this.edges);
     this.graph.CalculateWeight(this.edges);
     this.graph.CalculateEntropy();
+    this.target = '';
+    // eslint-disable-next-line no-restricted-syntax
+    for (const i of this.graph.nodes) {
+      if (i.name === this.source) {
+        this.nodesLink = this.graph.CheckCycle(i);
+      }
+    }
   }
 
   AddNode():void {
@@ -187,6 +196,15 @@ export default class Home extends Vue {
         this.formNode.nodeName = '';
       }
     });
+  }
+
+  SelectSource():void {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const i of this.graph.nodes) {
+      if (i.name === this.source) {
+        this.nodesLink = this.graph.CheckCycle(i);
+      }
+    }
   }
 }
 </script>
