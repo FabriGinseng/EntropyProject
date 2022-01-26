@@ -119,7 +119,7 @@ export default class Map {
   private GraphEntropy():number {
     this.totalEntropy = 0;
     this.nodes.forEach((node) => {
-      this.totalEntropy += node.entropy;
+      this.totalEntropy += Number((node.entropy).toFixed(3));
     });
     return this.totalEntropy;
   }
