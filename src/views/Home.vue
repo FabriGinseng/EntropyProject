@@ -7,11 +7,12 @@
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
           <el-card>
             <h2>ADD NODES</h2>
-            <el-form ref="formNodes" :model="formNode" label-position="top"  label-width="150px">
-                <el-form-item label="Name" prop="nodeName"  required>
+            <el-form ref="formNodes" :model="formNode" :rules="rules" label-position="top"
+                     label-width="150px">
+                <el-form-item label="Name" prop="nodeName" >
                   <el-input v-model="formNode.nodeName"></el-input>
                 </el-form-item>
-                <el-form-item label="Description" prop="nodeDescription" required>
+                <el-form-item label="Description" prop="nodeDescription">
                   <el-input v-model="formNode.nodeDescription" type="textarea"></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -29,7 +30,6 @@
               <el-table :data="graph.nodes">
                 <el-table-column label="Name" prop="name"/>
                 <el-table-column label="Description" prop="description"/>
-                <!--<el-table-column label="Entropia" prop="entropy"/>-->
               </el-table>
           </el-card>
           </el-col>
@@ -48,8 +48,7 @@
                         v-for="item in graph.nodes"
                         :key="item.name"
                         :label="item.name"
-                        :value="item.name"
-                      >
+                        :value="item.name">
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -70,7 +69,7 @@
                 </el-col>
               <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
               <el-form-item>
-                  <el-button @click="AddLink()">ADD</el-button>
+                  <el-button :disabled="nodesLink.length === 0" @click="AddLink()">ADD</el-button>
                 </el-form-item>
               </el-col>
               </el-form>
@@ -120,6 +119,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Map from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
+import { ElMessage } from 'element-plus';
 
 @Options({
   components: { GraphComponent },
@@ -148,25 +148,44 @@ export default class Home extends Vue {
 
   public graph: Map = new Map();
 
-  AddLink():void {
-    this.graph.edges.push(
+  public rules = {
+    nodeName: [
       {
-        // eslint-disable-next-line no-plusplus
-        name: `Link ${this.countName++}`,
-        source: this.source,
-        target: this.target,
-        label: 'weight',
-        weight: 0,
+        required: true,
+        message: 'Campo obbligatorio',
+        trigger: 'blur',
       },
-    );
-    this.graph.CreateLinks(this.edges);
-    this.graph.CalculateWeight(this.edges);
-    this.graph.CalculateEntropy();
-    this.target = '';
-    // eslint-disable-next-line no-restricted-syntax
-    for (const i of this.graph.nodes) {
-      if (i.name === this.source) {
-        this.nodesLink = this.graph.CheckCycle(i);
+    ],
+    nodeDescription: [
+      {
+        required: true,
+        message: 'Campo obbligatorio',
+        trigger: 'blur',
+      },
+    ],
+  }
+
+  AddLink():void {
+    if (this.target) {
+      this.graph.edges.push(
+        {
+          // eslint-disable-next-line no-plusplus
+          name: `Link ${this.countName++}`,
+          source: this.source,
+          target: this.target,
+          label: 'weight',
+          weight: 0,
+        },
+      );
+      this.graph.CreateLinks(this.edges);
+      this.graph.CalculateWeight(this.edges);
+      this.graph.CalculateEntropy();
+      this.target = '';
+      // eslint-disable-next-line no-restricted-syntax
+      for (const i of this.graph.nodes) {
+        if (i.name === this.source) {
+          this.nodesLink = this.graph.CheckCycle(i);
+        }
       }
     }
   }
@@ -176,26 +195,32 @@ export default class Home extends Vue {
 
     formRef.validate(async (valid: boolean) => {
       if (valid) {
-        const Y = this.x + 50;
-        this.x += 50;
         this.i += 1;
-        this.graph.nodes.push(
-          {
-            name: this.formNode.nodeName,
-            description: this.formNode.nodeDescription,
-            index: this.i,
-            links: [],
-            linkWeight: 0,
-            entropy: 0,
-            x: this.x,
-            y: Y,
-          },
-        );
-        this.graph.CreateNodes(this.nodes);
-        this.formNode.nodeDescription = '';
-        this.formNode.nodeName = '';
+        if (!this.CheckDuplicate()) {
+          this.graph.nodes.push(
+            {
+              name: this.formNode.nodeName,
+              description: this.formNode.nodeDescription,
+              index: this.i,
+              links: [],
+              linkWeight: 0,
+              entropy: 0,
+            },
+          );
+          this.graph.CreateNodes(this.nodes);
+          this.formNode.nodeDescription = '';
+          this.formNode.nodeName = '';
+        } else ElMessage.error('Nodo giá presente');
       }
     });
+  }
+
+  CheckDuplicate():boolean {
+    let flag = false;
+    this.graph.nodes.forEach((node) => {
+      if (node.name === this.formNode.nodeName) flag = true;
+    });
+    return flag;
   }
 
   SelectSource():void {

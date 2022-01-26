@@ -1,9 +1,17 @@
 /**
+ * @author Antonio Fabrizio Fiume
+ * @version 1.0.0
+ */
+
+/**
  * This interface describes the nodes in the graph
  * @interface Node
  * @member name node name
  * @member description node description
- * @member links edges
+ * @member links edges of graph
+ * @member index the order in which the node is added in the graph
+ * @member linkWeight the weight of node
+ * @member entropy the entropy
  */
 interface Node{
   name:string;
@@ -12,10 +20,16 @@ interface Node{
   links:Array<string>;
   linkWeight:number;
   entropy:number;
-  x: number;
-  y: number;
 }
-
+/**
+ * This interface describes the Edges in the graph
+ * @interface Node
+ * @member name edge name
+ * @member source node source
+ * @member target node target
+ * @member label the label will display the weight
+ * @member weight the weight of Edge
+ */
 interface Edge {
   name:string;
   source:string;
@@ -24,6 +38,13 @@ interface Edge {
   weight:number
 }
 
+/**
+ * This class describes the Map
+ * @class Map
+ * @member nodes array of nodes
+ * @member edges array of edges
+ * @member totalEntropy
+ */
 export default class Map {
   nodes: Node[];
 
@@ -31,21 +52,30 @@ export default class Map {
 
   totalEntropy: number;
 
+  /**
+   * @constructor of Map class
+   */
   constructor() {
     this.nodes = [];
     this.edges = [];
     this.totalEntropy = 0;
   }
 
+  /**
+   *  This is a function that create a list of nodes
+   *  @param {*} nodesList - this parameter is loaded with nodes
+   */
   public CreateNodes(nodesList:any):void {
     this.nodes.forEach((node) => {
       // eslint-disable-next-line no-param-reassign
-      nodesList[node.name] = {
-        name: node.name, order: node.index, x: node.x, y: node.y,
-      };
+      nodesList[node.name] = { name: node.name, order: node.index };
     });
   }
 
+  /**
+   * this function create a list of links
+   * @param linkList
+   */
   public CreateLinks(linkList:any):void {
     this.edges.forEach((edge) => {
       // eslint-disable-next-line no-param-reassign
@@ -55,18 +85,21 @@ export default class Map {
     });
   }
 
+  /**
+   * the function return the weight of link
+   * @param listEdges
+   */
   public CalculateWeight(listEdges:any):void {
-    // eslint-disable-next-line no-underscore-dangle
-    const _edges:any = [];
+    const tempEdges:any = [];
     this.edges.forEach((edge) => {
-      if (_edges[edge.source] === undefined) _edges[edge.source] = [];
-      _edges[edge.source].push(edge.target);
+      if (tempEdges[edge.source] === undefined) tempEdges[edge.source] = [];
+      tempEdges[edge.source].push(edge.target);
     });
     this.nodes.forEach((node) => {
       // eslint-disable-next-line no-param-reassign
-      node.links = _edges[node.name];
+      node.links = tempEdges[node.name];
       // eslint-disable-next-line no-param-reassign
-      if (node.links !== undefined) node.linkWeight = Number((1 / node.links.length).toFixed(3));
+      if (!(node.links === undefined)) node.linkWeight = Number((1 / node.links.length).toFixed(3));
       this.edges.forEach((edge) => {
         if (edge.source === node.name) {
           // eslint-disable-next-line no-param-reassign
@@ -77,7 +110,6 @@ export default class Map {
           source: edge.source, target: edge.target, label: `${edge.label} ${edge.weight}`, peso: edge.weight,
         };
       });
-      console.log(`collegamenti di ${node.index}`, node.links, node);
     });
   }
 
@@ -91,7 +123,9 @@ export default class Map {
       }
     });
   } */
-
+  /**
+   * The function calculates the nodes entropy
+   */
   public CalculateEntropy():void {
     this.nodes.forEach((node) => {
       const link:number[] = [];
@@ -116,6 +150,11 @@ export default class Map {
     });
   }
 
+  /**
+   * A private function that calculates the total entropy
+   * @private
+   * @return totalEntropy
+   */
   private GraphEntropy():number {
     this.totalEntropy = 0;
     this.nodes.forEach((node) => {
@@ -124,9 +163,15 @@ export default class Map {
     return this.totalEntropy;
   }
 
+  /**
+   * The function checks whether the links loop and returns the list of nodes that can be linked
+   * from the pass node as a parameter
+   * @param nodeSelected
+   * @return GenerateListLinks
+   */
   public CheckCycle(nodeSelected:Node):Node[] {
-    const prova:Node[] = [];
-    const nodiControllo:Node[] = [];
+    const arrayNode:Node[] = [];
+    const tempNodes:Node[] = [];
     // eslint-disable-next-line no-restricted-syntax
     for (const i of this.nodes) {
       let flag = true;
@@ -143,40 +188,45 @@ export default class Map {
           for (let z = 0; z < i.links.length; z += 1) {
             const y = i.links[z];
             if (nodeSelected.name === y) {
-              console.log('y', y);
-              nodiControllo.push(i);
+              tempNodes.push(i);
               flag = false;
               break;
             }
           }
         }
       }
-      if (flag) prova.push(i);
+      if (flag) arrayNode.push(i);
     }
-    console.log('p', nodiControllo);
-    // eslint-disable-next-line no-restricted-syntax
-    for (const i of nodiControllo) {
-      const flag = false;
-      // eslint-disable-next-line no-restricted-syntax
-      for (const z of this.nodes) {
-        // eslint-disable-next-line no-restricted-syntax
+    return this.GenerateListLinks(tempNodes, arrayNode);
+  }
+
+  /**
+   * The function return the list of links that the node can be linked
+   * @param tempNodes
+   * @param arrayNode
+   * @private
+   * @return arrayNode
+   */
+  private GenerateListLinks(tempNodes:Node[], arrayNode: Node[]): Node[] {
+    const arrayN = arrayNode;
+    const arrayT = tempNodes;
+    arrayT.forEach((i) => {
+      // const flag = false;
+      this.nodes.forEach((z) => {
         if (z.links !== undefined) {
-          // eslint-disable-next-line no-restricted-syntax
-          for (const link of z.links) {
+          z.links.forEach((link) => {
             if (link === i.name) {
-              // eslint-disable-next-line no-restricted-syntax
-              for (const k in prova) {
-                if (prova[k].name === z.name) {
-                  nodiControllo.push(z);
-                  prova.splice(+k, 1);
+              for (let k = 0; k < arrayN.length; k += 1) {
+                if (arrayN[k].name === z.name) {
+                  arrayT.push(z);
+                  arrayN.splice(+k, 1);
                 }
               }
             }
-          }
+          });
         }
-      }
-    }
-    console.log(prova);
-    return prova;
+      });
+    });
+    return arrayNode;
   }
 }
