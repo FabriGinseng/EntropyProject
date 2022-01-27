@@ -30,6 +30,13 @@
               <el-table :data="graph.nodes">
                 <el-table-column label="Name" prop="name"/>
                 <el-table-column label="Description" prop="description"/>
+                <el-table-column label="Operations">
+                  <template #default="scope">
+                    <el-button type="danger" @click="DeleteNode(scope.row)" circle>
+                      <el-icon><delete /></el-icon>
+                    </el-button>
+                  </template>
+                </el-table-column>
               </el-table>
           </el-card>
           </el-col>
@@ -187,6 +194,11 @@ export default class Home extends Vue {
         break;
       }
     }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  DeleteNode(selectedNode: Node):void{
+    console.log(selectedNode);
   }
 
   AddLink():void {
