@@ -209,16 +209,16 @@ export default class Map {
    */
   private GenerateListLinks(tempNodes:Node[], arrayNode: Node[]): Node[] {
     const arrayN = arrayNode;
-    const arrayT = tempNodes;
-    arrayT.forEach((i) => {
+    const arrayControl = tempNodes;
+    for (let i = 0; i < arrayControl.length; i += 1) {
       // const flag = false;
       this.nodes.forEach((z) => {
         if (z.links !== undefined) {
           z.links.forEach((link) => {
-            if (link === i.name) {
+            if (link === arrayControl[i].name) {
               for (let k = 0; k < arrayN.length; k += 1) {
                 if (arrayN[k].name === z.name) {
-                  arrayT.push(z);
+                  arrayControl.push(z);
                   arrayN.splice(+k, 1);
                 }
               }
@@ -226,7 +226,7 @@ export default class Map {
           });
         }
       });
-    });
-    return arrayNode;
+    }
+    return arrayN;
   }
 }
