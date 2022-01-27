@@ -130,6 +130,7 @@ import Map from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
 import { Delete } from '@element-plus/icons-vue';
+import { Edge } from 'v-network-graph';
 
 @Options({
   components: { GraphComponent, Delete },
@@ -144,11 +145,11 @@ export default class Home extends Vue {
 
   i = 0;
 
-  nodes = {};
+  nodes : {[index:string]:any} = {};
 
   nodesLink = {};
 
-  edges = {};
+  edges : {[index:string]:any} = {};
 
   source = '';
 
@@ -176,8 +177,16 @@ export default class Home extends Vue {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  DeleteLink(selectedNode: Node):void {
-    console.log(selectedNode);
+  DeleteLink(selectedEdge: Edge):void {
+    for (let i = 0; i < this.graph.edges.length; i += 1) {
+      if (this.graph.edges[i] === selectedEdge) {
+        this.graph.edges.splice(i, 1);
+        delete this.edges[selectedEdge.name];
+        this.graph.CalculateWeight(this.edges);
+        this.graph.CalculateEntropy();
+        break;
+      }
+    }
   }
 
   AddLink():void {
