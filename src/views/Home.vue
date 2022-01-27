@@ -199,7 +199,7 @@ export default class Home extends Vue {
   DeleteNode(selectedNode: Node):void{
     if ((selectedNode.links !== undefined && selectedNode.links.length > 0)
       || this.graph.CheckNodesDelete(selectedNode)) {
-      ElMessage.error('Nodo ha dei links ad altri nodi');
+      ElMessage.error('Il nodo ha è collegato ad altri nodi, rimuovere prima tutti i collegamenti');
       return;
     }
     for (let i = 0; i < this.graph.nodes.length; i += 1) {
