@@ -155,6 +155,11 @@ export default class Map {
     });
   }
 
+  /**
+   * this method calculate a number factorial
+   * @param num
+   * @return factorial
+   */
   factorialize(num: number):number {
     if (num < 0) return -1;
     if (num === 0) return 1;

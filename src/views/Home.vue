@@ -84,6 +84,13 @@
               <el-table :data="graph.edges">
                 <el-table-column label="Source" prop="source"/>
                 <el-table-column label="Target" prop="target"/>
+                <el-table-column label="Operations">
+                  <template #default="scope">
+                    <el-button type="danger" @click="DeleteLink(scope.row)" circle>
+                      <el-icon><delete /></el-icon>
+                    </el-button>
+                  </template>
+                </el-table-column>
               </el-table>
           </el-card>
           </el-col>
@@ -122,9 +129,10 @@ import { Options, Vue } from 'vue-class-component';
 import Map from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
+import { Delete } from '@element-plus/icons-vue';
 
 @Options({
-  components: { GraphComponent },
+  components: { GraphComponent, Delete },
 })
 export default class Home extends Vue {
   formNode = {
@@ -165,6 +173,11 @@ export default class Home extends Vue {
         trigger: 'blur',
       },
     ],
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  DeleteLink(selectedNode: Node):void {
+    console.log(selectedNode);
   }
 
   AddLink():void {
