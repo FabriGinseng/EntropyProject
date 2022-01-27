@@ -94,6 +94,8 @@
           <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
             <el-card header="ENTROPY">
               <label>ENTROPIA TOTALE: {{ graph.totalEntropy }} </label>
+              <el-divider></el-divider>
+              <label>ENTROPIA PERCENTUALE: {{ graph.totalEntropyPerc }} </label>
             </el-card>
           </el-col>
         </el-row>

@@ -52,6 +52,8 @@ export default class Map {
 
   totalEntropy: number;
 
+  totalEntropyPerc: number;
+
   /**
    * @constructor of Map class
    */
@@ -59,6 +61,7 @@ export default class Map {
     this.nodes = [];
     this.edges = [];
     this.totalEntropy = 0;
+    this.totalEntropyPerc = 0;
   }
 
   /**
@@ -146,8 +149,17 @@ export default class Map {
           node.entropy *= -1;
         }
       });
-      this.GraphEntropy();
+      const result = this.GraphEntropy();
+      // eslint-disable-next-line max-len
+      this.totalEntropyPerc = Number((100 * (this.totalEntropy / (Math.log2(this.factorialize(this.nodes.length - 1))))).toFixed(2));
     });
+  }
+
+  factorialize(num: number):number {
+    if (num < 0) return -1;
+    if (num === 0) return 1;
+
+    return (num * this.factorialize(num - 1));
   }
 
   /**
