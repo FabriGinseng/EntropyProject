@@ -133,11 +133,10 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Map from '@/Classes/Map';
+import Map, { Edge, Node } from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
 import { Delete } from '@element-plus/icons-vue';
-import { Edge } from 'v-network-graph';
 
 @Options({
   components: { GraphComponent, Delete },
@@ -198,7 +197,17 @@ export default class Home extends Vue {
 
   // eslint-disable-next-line class-methods-use-this
   DeleteNode(selectedNode: Node):void{
-    console.log(selectedNode);
+    if ((selectedNode.links !== undefined && selectedNode.links.length > 0)
+      || this.graph.CheckNodesDelete(selectedNode)) {
+      ElMessage.error('Nodo ha dei links ad altri nodi');
+      return;
+    }
+    for (let i = 0; i < this.graph.nodes.length; i += 1) {
+      if (this.graph.nodes[i] === selectedNode) {
+        this.graph.nodes.splice(i, 1);
+        delete this.nodes[selectedNode.name];
+      }
+    }
   }
 
   AddLink():void {

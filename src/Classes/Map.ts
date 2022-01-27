@@ -13,7 +13,7 @@
  * @member linkWeight the weight of node
  * @member entropy the entropy
  */
-interface Node{
+export interface Node{
   name:string;
   index: number
   description:string;
@@ -30,7 +30,7 @@ interface Node{
  * @member label the label will display the weight
  * @member weight the weight of Edge
  */
-interface Edge {
+export interface Edge {
   name:string;
   source:string;
   target:string;
@@ -215,6 +215,28 @@ export default class Map {
       if (flag) arrayNode.push(i);
     }
     return this.GenerateListLinks(tempNodes, arrayNode);
+  }
+
+  /**
+   * The function checks whether the links loop and returns the list of nodes that can be linked
+   * from the pass node as a parameter
+   * @param nodeSelected
+   * @return GenerateListLinks
+   */
+  public CheckNodesDelete(nodeSelected:Node):boolean {
+    let flag = false;
+    for (let i = 0; i < this.nodes.length; i += 1) {
+      if (this.nodes[i].links !== undefined) {
+        for (let z = 0; z < this.nodes[i].links.length; z += 1) {
+          if (this.nodes[i].links[z] === nodeSelected.name) {
+            flag = true;
+            break;
+          }
+        }
+      }
+      if (flag) break;
+    }
+    return flag;
   }
 
   /**
