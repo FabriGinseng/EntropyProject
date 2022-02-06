@@ -136,7 +136,7 @@ import { Options, Vue } from 'vue-class-component';
 import Map, { Edge, Node } from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
-import { Delete } from '@element-plus/icons-vue';
+import { Delete, Watch } from '@element-plus/icons-vue';
 
 @Options({
   components: { GraphComponent, Delete },
@@ -232,12 +232,12 @@ export default class Home extends Vue {
           this.nodesLink = this.graph.CheckCycle(i);
         }
       }
+      this.source = '';
     }
   }
 
   AddNode():void {
     const formRef = this.$refs.formNodes as any;
-
     formRef.validate(async (valid: boolean) => {
       if (valid) {
         this.i += 1;
