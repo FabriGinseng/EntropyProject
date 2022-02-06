@@ -4,6 +4,21 @@
     :edges="edges"
     :configs="configs"
   >
+    <template
+      #override-node-label="{
+        scale, text
+      }"
+    >
+      <text
+        x="0"
+        y="0"
+        :font-size="10 * scale"
+        text-anchor="middle"
+        dominant-baseline="central"
+        fill="#ffffff"
+      >{{ text }}</text
+      >
+    </template>
   <template #edge-label="{ edge, ...slotProps }">
     <v-edge-label
       :text="edge.label"

@@ -1,12 +1,12 @@
 <template>
   <el-main>
-    <h1>CREATE YOUR MIND MAP</h1>
+    <h1>CREATE YOUR CONCEPTUAL MAP</h1>
     <el-row :gutter="10">
-      <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
         <el-row>
-          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
-            <h2>ADD NODES</h2>
+            <h2>ADD NODE</h2>
             <el-form ref="formNodes" :model="formNode" :rules="rules" label-position="top"
                      label-width="150px">
                 <el-form-item label="Name" prop="nodeName" >
@@ -24,7 +24,7 @@
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
-          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
               <h2>NODES</h2>
               <el-table :data="graph.nodes">
@@ -43,13 +43,13 @@
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
-          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
-            <h2>ADD LINKS</h2>
+            <h2>ADD ARCS</h2>
             <el-form ref="formRef" label-position="left" :inline="true"
                      :disabled="graph.nodes.length < 2">
-              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
-                  <el-form-item label="Start node">
+              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
+                  <el-form-item label="From node">
                     <el-select v-model="source" @change="SelectSource"  placeholder="Select">
                       <el-option
                         v-for="item in graph.nodes"
@@ -60,8 +60,8 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
-                  <el-form-item label="Target node">
+              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
+                  <el-form-item label="To node">
                     <el-select v-model="target" placeholder="Select">
                       <el-option
                         v-for="item in nodesLink"
@@ -74,7 +74,12 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="8">
+              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
+                <el-form-item label="Description">
+                  <el-input v-model="description" placeholder="add description"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
               <el-form-item>
                   <el-button :disabled="nodesLink.length === 0" @click="AddLink()">ADD</el-button>
                 </el-form-item>
@@ -85,9 +90,9 @@
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
-          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
-              <h2>Links</h2>
+              <h2>ARCS</h2>
               <el-table :data="graph.edges">
                 <el-table-column label="Source" prop="source"/>
                 <el-table-column label="Target" prop="target"/>
@@ -103,9 +108,9 @@
           </el-col>
         </el-row>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
         <el-row>
-          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <el-card header="ENTROPY">
               <label>TOTAL: {{ graph.totalEntropy }} </label>
               <el-divider></el-divider>
@@ -115,7 +120,7 @@
         </el-row>
         <el-divider border-style="double"/>
         <el-row>
-          <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="24">
+          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <el-space wrap>
             <el-card header="MIND MAP">
               <GraphComponent
@@ -162,6 +167,8 @@ export default class Home extends Vue {
   target = '';
 
   countName = 0;
+
+  description = '';
 
   public graph: Map = new Map();
 
@@ -218,7 +225,7 @@ export default class Home extends Vue {
           name: `Link ${this.countName++}`,
           source: this.source,
           target: this.target,
-          label: 'weight',
+          label: this.description,
           weight: 0,
         },
       );

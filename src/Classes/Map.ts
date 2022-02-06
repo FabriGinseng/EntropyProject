@@ -83,7 +83,7 @@ export default class Map {
     this.edges.forEach((edge) => {
       // eslint-disable-next-line no-param-reassign
       linkList[edge.name] = {
-        source: edge.source, target: edge.target, label: edge.label + edge.weight, peso: 0,
+        source: edge.source, target: edge.target, label: `${edge.label}(${edge.weight})`, peso: 0,
       };
     });
   }
@@ -110,7 +110,7 @@ export default class Map {
         }
         // eslint-disable-next-line no-param-reassign
         listEdges[edge.name] = {
-          source: edge.source, target: edge.target, label: `${edge.label} ${edge.weight}`, peso: edge.weight,
+          source: edge.source, target: edge.target, label: `${edge.label} (${edge.weight})`, peso: edge.weight,
         };
       });
     });
