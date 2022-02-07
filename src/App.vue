@@ -12,7 +12,7 @@
 }
 
 #nav {
-  padding: 30px;
+  padding: 10px;
 }
 
 #nav a {
@@ -24,3 +24,8 @@
   color: #42b983;
 }
 </style>
+<script>
+
+export default {
+};
+</script>
