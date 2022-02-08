@@ -2,8 +2,10 @@
   <el-main>
     <h1>CREATE YOUR CONCEPTUAL MAP</h1>
     <el-row :gutter="10">
+      <!-- FIRST COLUMN -->
       <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
         <el-row>
+          <!-- ADD NODE -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
             <h2>ADD NODE</h2>
@@ -23,6 +25,7 @@
           </el-col>
         </el-row>
         <el-divider border-style="double"></el-divider>
+        <!-- NODES -->
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
@@ -43,6 +46,7 @@
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
+          <!-- ADD ARCS -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
             <h2>ADD ARCS</h2>
@@ -90,6 +94,7 @@
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
+          <!-- ARCS -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
               <h2>ARCS</h2>
@@ -108,8 +113,11 @@
           </el-col>
         </el-row>
       </el-col>
+
+      <!-- SECOND COLUMN -->
       <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
         <el-row>
+          <!-- ENTROPY -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <el-card header="ENTROPY">
               <label>TOTAL: {{ graph.totalEntropy }} </label>
@@ -121,14 +129,13 @@
         <el-divider border-style="double"/>
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-            <el-space wrap>
+            <!-- MAP -->
             <el-card header="MIND MAP">
               <GraphComponent
                 style="height: 810px"
                 :edges="edges"
                 :nodes="nodes"/>
             </el-card>
-            </el-space>
           </el-col>
         </el-row>
       </el-col>
