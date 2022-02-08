@@ -138,6 +138,7 @@
             </el-card>
           </el-col>
         </el-row>
+        <el-button @click="DownloadMethod()">DOWNLOAD</el-button>
       </el-col>
     </el-row>
   </el-main>
@@ -149,6 +150,7 @@ import Map, { Edge, Node } from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
 import { Delete, Watch } from '@element-plus/icons-vue';
+import axios from 'axios';
 
 @Options({
   components: { GraphComponent, Delete },
@@ -207,6 +209,19 @@ export default class Home extends Vue {
         break;
       }
     }
+  }
+
+  DownloadMethod() {
+    const data = JSON.stringify(this.graph);
+    localStorage.setItem('file', data);
+    const blob = new Blob([data], { type: 'text/plain' });
+    const e = document.createEvent('MouseEvents');
+    const a = document.createElement('a');
+    a.download = 'test.json';
+    a.href = window.URL.createObjectURL(blob);
+    a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+    e.initEvent('click', true, false);
+    a.dispatchEvent(e);
   }
 
   // eslint-disable-next-line class-methods-use-this
