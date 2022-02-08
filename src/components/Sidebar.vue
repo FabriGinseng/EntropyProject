@@ -20,7 +20,7 @@
             </el-menu-item>
             <el-menu-item index="3">
               <el-icon><upload /></el-icon>
-              <template #title>Upload map</template>
+              <template #title>upload map</template>
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
