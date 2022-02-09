@@ -145,9 +145,12 @@
   <el-dialog v-model="clickedUpload">
     <el-row>
       <el-upload
-        ref="uploadRef"
+        ref="upload"
         class="upload-demo"
+        :on-preview="handleFilePreview"
         drag
+        :limit="1"
+        :on-exceed="handleExceed"
         :auto-upload="false">
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">
@@ -159,6 +162,10 @@
           </div>
         </template>
       </el-upload>
+      <el-button class="ml-3" type="success" @click="submitUpload"
+      >upload to server</el-button
+      >
+
     </el-row>
   </el-dialog>
 </template>
@@ -167,11 +174,13 @@
 import { Options, Vue } from 'vue-class-component';
 import Map, { Edge, Node } from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
-import { ElMessage, ElUpload } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import { Delete, UploadFilled } from '@element-plus/icons-vue';
 import { ref } from 'vue';
-import { Prop, Watch } from 'vue-property-decorator';
+import { Prop } from 'vue-property-decorator';
+import { UploadFile } from 'element-plus/es/components/upload/src/upload.type';
 
+const upload = ref();
 @Options({
   components: { GraphComponent, Delete, UploadFilled },
 })
@@ -200,8 +209,6 @@ export default class Home extends Vue {
   description = '';
 
   dialogUploadVisible = true;
-
-   uploadRef = ref<InstanceType<typeof ElUpload>>();
 
   @Prop() readonly clickedUpload: boolean | undefined
 
@@ -237,10 +244,26 @@ export default class Home extends Vue {
     }
   }
 
-  handleFilePreview() {
-    const file = this.uploadRef.value;
-    console.log(this.uploadRef.value);
-  }
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  submitUpload = () => {
+    console.log(upload);
+  };
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  handleExceed = (files: FileList, fileList: UploadFile[]) => {
+    ElMessage.warning(
+      `The limit is 1, you selected ${files.length} files this time, add up to ${
+        files.length + fileList.length
+      } totally`,
+    );
+  };
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  handleFilePreview = (file: UploadFile) => {
+    console.log('entro?');
+    console.log(file);
+  };
 
   DownloadMethod() {
     const data = JSON.stringify(this.graph);
@@ -335,12 +358,6 @@ export default class Home extends Vue {
         this.nodesLink = this.graph.CheckCycle(i);
       }
     }
-  }
-
-  @Watch('clickedUpload')
-  ClickUploadWatch(newVal:any):void{
-    if (this.clickedUpload) this.handleFilePreview();
-    console.log('sono entrato');
   }
 }
 </script>
