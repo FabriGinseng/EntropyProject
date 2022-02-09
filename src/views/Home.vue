@@ -142,18 +142,38 @@
       </el-col>
     </el-row>
   </el-main>
+  <el-dialog v-model="clickedUpload">
+    <el-row>
+      <el-upload
+        ref="uploadRef"
+        class="upload-demo"
+        drag
+        :auto-upload="false">
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">
+          Drop file here or <em>click to upload</em>
+        </div>
+        <template #tip>
+          <div class="el-upload__tip">
+            only json files
+          </div>
+        </template>
+      </el-upload>
+    </el-row>
+  </el-dialog>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Map, { Edge, Node } from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
-import { ElMessage } from 'element-plus';
-import { Delete, Watch } from '@element-plus/icons-vue';
-import axios from 'axios';
+import { ElMessage, ElUpload } from 'element-plus';
+import { Delete, UploadFilled } from '@element-plus/icons-vue';
+import { ref } from 'vue';
+import { Prop, Watch } from 'vue-property-decorator';
 
 @Options({
-  components: { GraphComponent, Delete },
+  components: { GraphComponent, Delete, UploadFilled },
 })
 export default class Home extends Vue {
   formNode = {
@@ -178,6 +198,12 @@ export default class Home extends Vue {
   countName = 0;
 
   description = '';
+
+  dialogUploadVisible = true;
+
+   uploadRef = ref<InstanceType<typeof ElUpload>>();
+
+  @Prop() readonly clickedUpload: boolean | undefined
 
   public graph: Map = new Map();
 
@@ -209,6 +235,11 @@ export default class Home extends Vue {
         break;
       }
     }
+  }
+
+  handleFilePreview() {
+    const file = this.uploadRef.value;
+    console.log(this.uploadRef.value);
   }
 
   DownloadMethod() {
@@ -304,6 +335,12 @@ export default class Home extends Vue {
         this.nodesLink = this.graph.CheckCycle(i);
       }
     }
+  }
+
+  @Watch('clickedUpload')
+  ClickUploadWatch(newVal:any):void{
+    if (this.clickedUpload) this.handleFilePreview();
+    console.log('sono entrato');
   }
 }
 </script>
