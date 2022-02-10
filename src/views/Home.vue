@@ -147,9 +147,10 @@
       <el-upload
         ref="upload"
         class="upload-demo"
+        :file-list="fileUploaded"
         :on-preview="handleFilePreview"
         drag
-        :limit="1"
+        :on-change="handleChange"
         :on-exceed="handleExceed"
         :auto-upload="false">
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
@@ -185,6 +186,8 @@ const upload = ref();
   components: { GraphComponent, Delete, UploadFilled },
 })
 export default class Home extends Vue {
+  fileUploaded = []
+
   formNode = {
     nodeName: '',
     nodeDescription: '',
@@ -231,6 +234,10 @@ export default class Home extends Vue {
     ],
   }
 
+  handleChange = (file: UploadFile, list: UploadFile[]) => {
+    console.log('file', file, list);
+  }
+
   // eslint-disable-next-line class-methods-use-this
   DeleteLink(selectedEdge: Edge):void {
     for (let i = 0; i < this.graph.edges.length; i += 1) {
@@ -246,7 +253,7 @@ export default class Home extends Vue {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   submitUpload = () => {
-    console.log(upload);
+    console.log(this.fileUploaded);
   };
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
