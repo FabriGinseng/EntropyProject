@@ -147,11 +147,9 @@
       <el-upload
         ref="upload"
         class="upload-demo"
-        :file-list="fileUploaded"
-        :on-preview="handleFilePreview"
         drag
+        accept="application/json"
         :on-change="handleChange"
-        :on-exceed="handleExceed"
         :auto-upload="false">
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">
@@ -163,10 +161,6 @@
           </div>
         </template>
       </el-upload>
-      <el-button class="ml-3" type="success" @click="submitUpload"
-      >upload to server</el-button
-      >
-
     </el-row>
   </el-dialog>
 </template>
@@ -234,8 +228,29 @@ export default class Home extends Vue {
     ],
   }
 
-  handleChange = (file: UploadFile, list: UploadFile[]) => {
-    console.log('file', file, list);
+  // eslint-disable-next-line max-len
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,class-methods-use-this
+  sleep() {
+    return new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
+  handleChange = async (file: UploadFile, list: UploadFile[]) => {
+    try {
+      const reader = new FileReader();
+      let result: any = null;
+      reader.onload = (event) => {
+        result = event.target;
+      };
+      reader.readAsText(file.raw);
+      await this.sleep();
+      if (typeof reader.result === 'string') {
+        JSON.parse(reader.result);
+        this.graph.CreateNodes(this.nodes);
+        this.graph.CreateLinks(this.edges);
+      }
+    } catch (error:any) {
+      console.log(error);
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -252,24 +267,12 @@ export default class Home extends Vue {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  submitUpload = () => {
-    console.log(this.fileUploaded);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   handleExceed = (files: FileList, fileList: UploadFile[]) => {
     ElMessage.warning(
       `The limit is 1, you selected ${files.length} files this time, add up to ${
         files.length + fileList.length
       } totally`,
     );
-  };
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  handleFilePreview = (file: UploadFile) => {
-    console.log('entro?');
-    console.log(file);
   };
 
   DownloadMethod() {
