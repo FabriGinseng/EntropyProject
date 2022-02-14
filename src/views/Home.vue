@@ -148,6 +148,8 @@
         ref="upload"
         class="upload-demo"
         drag
+        :limit="1"
+        :on-exceed="handleExceed"
         accept="application/json"
         :on-change="handleChange"
         :auto-upload="false">
@@ -236,6 +238,7 @@ export default class Home extends Vue {
 
   handleChange = async (file: UploadFile, list: UploadFile[]) => {
     try {
+      console.log(file);
       const reader = new FileReader();
       let result: any = null;
       reader.onload = (event) => {
@@ -244,9 +247,14 @@ export default class Home extends Vue {
       reader.readAsText(file.raw);
       await this.sleep();
       if (typeof reader.result === 'string') {
-        JSON.parse(reader.result);
+        const response = JSON.parse(reader.result);
+        console.log(response);
+        this.graph.nodes = response.nodes;
+        this.graph.edges = response.edges;
         this.graph.CreateNodes(this.nodes);
         this.graph.CreateLinks(this.edges);
+        this.graph.CalculateWeight(this.edges);
+        this.graph.CalculateEntropy();
       }
     } catch (error:any) {
       console.log(error);
