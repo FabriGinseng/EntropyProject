@@ -33,6 +33,7 @@
               <el-table :data="graph.nodes">
                 <el-table-column label="Name" prop="name"/>
                 <el-table-column label="Description" prop="description"/>
+                <el-table-column label="entropia" prop="entropy"/>
                 <el-table-column label="Operations">
                   <template #default="scope">
                     <el-button type="danger" @click="DeleteNode(scope.row)" circle>
@@ -254,7 +255,7 @@ export default class Home extends Vue {
         this.graph.CreateNodes(this.nodes);
         this.graph.CreateLinks(this.edges);
         this.graph.CalculateWeight(this.edges);
-        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropy(this.edges);
       }
     } catch (error:any) {
       console.log(error);
@@ -268,7 +269,7 @@ export default class Home extends Vue {
         this.graph.edges.splice(i, 1);
         delete this.edges[selectedEdge.name];
         this.graph.CalculateWeight(this.edges);
-        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropy(this.edges);
         break;
       }
     }
@@ -325,7 +326,7 @@ export default class Home extends Vue {
       );
       this.graph.CreateLinks(this.edges);
       this.graph.CalculateWeight(this.edges);
-      this.graph.CalculateEntropy();
+      this.graph.CalculateEntropy(this.edges);
       this.target = '';
       // eslint-disable-next-line no-restricted-syntax
       for (const i of this.graph.nodes) {
@@ -334,6 +335,7 @@ export default class Home extends Vue {
         }
       }
       this.source = '';
+      this.description = '';
     }
   }
 

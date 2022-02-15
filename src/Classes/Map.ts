@@ -73,9 +73,8 @@ export default class Map {
     this.nodes.forEach((node) => {
       // eslint-disable-next-line no-param-reassign
       nodesList[node.name] = {
-        name: node.name, order: node.index, size: node.name.length > 5 ? node.name.length * 5 : 16, color: 'white',
+        name: node.name, order: node.index, size: node.name.length > 3 ? node.name.length * 5 : node.name.length * 20, color: 'white',
       };
-      console.log(nodesList[node.name]);
     });
   }
 
@@ -114,26 +113,26 @@ export default class Map {
         }
         // eslint-disable-next-line no-param-reassign
         listEdges[edge.name] = {
-          source: edge.source, target: edge.target, label: `${edge.label} (${edge.weight})`, peso: edge.weight,
+          source: edge.source, target: edge.target, label: `${edge.label}`, peso: edge.weight,
         };
       });
     });
   }
 
-  /*
-  public calcolaEntropiaNodoUscita():void {
+  /* public CalculateEntropyEdges():void {
     this.nodes.forEach((node) => {
       if (node.links !== undefined && node.links.length > 0) {
-        const entropy = -1 * (node.links.length * (node.pesoLink * (Math.log2(node.pesoLink))));
+        const entropy = -1 * (node.links.length * (node.linkWeight * (Math.log2(node.linkWeight))));
         // eslint-disable-next-line no-param-reassign
-        node.entropy = entropy;
+        node.entropy = Number(entropy.toFixed(3));
       }
     });
   } */
+
   /**
    * The function calculates the nodes entropy
    */
-  public CalculateEntropy():void {
+  public CalculateEntropy(listEdges:any):void {
     this.nodes.forEach((node) => {
       const link:number[] = [];
       this.nodes.forEach((nodeEnter:Node) => {
@@ -152,15 +151,21 @@ export default class Map {
           // eslint-disable-next-line no-param-reassign
           node.entropy *= -1;
         }
+        this.edges.forEach((edge) => {
+          if (edge.target === node.name) {
+            // eslint-disable-next-line no-param-reassign
+            listEdges[edge.name].label = `${edge.label} (${node.entropy.toFixed(3)})`;
+          }
+        });
       });
-      const result = this.GraphEntropy();
+      this.GraphEntropy();
       // eslint-disable-next-line max-len
-      this.totalEntropyPerc = Number((100 * (this.totalEntropy / (Math.log2(this.factorialize(this.nodes.length - 1))))).toFixed(2));
+      this.totalEntropyPerc = Number((100 * (this.totalEntropy / (Math.log2(this.factorialize(this.nodes.length - 1))))).toFixed(3));
     });
   }
 
   /**
-   * this method calculate a number factorial
+   * this method calculate the factorial of a number
    * @param num
    * @return factorial
    */
