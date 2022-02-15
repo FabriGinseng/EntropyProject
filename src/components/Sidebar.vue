@@ -10,32 +10,56 @@
       <el-aside width="70px">
         <el-scrollbar>
           <el-menu :collapse="true">
-            <el-menu-item index="1">
+            <el-menu-item index="1" >
               <el-icon><icon-menu /></el-icon>
               <template #title>Map</template>
             </el-menu-item>
-            <el-menu-item index="2">
+            <el-menu-item index="2" @click="Download">
               <el-icon><download /></el-icon>
               <template #title>Download map</template>
             </el-menu-item>
-            <el-menu-item index="3">
+            <el-menu-item index="3" @click="Select">
               <el-icon><upload /></el-icon>
               <template #title>upload map</template>
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
       </el-aside>
-      <Home/>
+      <Home @CloseDialog="CloseDialogEvent()"
+            :clickedUpload = "clickUp" :downloadAction = "downloadAction"/>
     </el-container>
   </el-container>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import {
-  Message, Menu as IconMenu, Upload, Download, Setting,
+  Message, Menu as IconMenu, Upload, Download, Setting, Delete,
 } from '@element-plus/icons-vue';
 import Home from '@/views/Home.vue';
+import { Options, Vue } from 'vue-class-component';
 
+@Options({
+  components: {
+    Message, IconMenu, Upload, Download, Setting, Delete, Home,
+  },
+})
+export default class Sidebar extends Vue {
+clickUp = false;
+
+  downloadAction=false;
+
+  public Select():void{
+    this.clickUp = !this.clickUp;
+  }
+
+  public Download():void{
+    this.downloadAction = !this.downloadAction;
+  }
+
+  public CloseDialogEvent():void{
+    this.clickUp = !this.clickUp;
+  }
+}
 </script>
 
 <style scoped>

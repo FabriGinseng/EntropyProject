@@ -49,7 +49,7 @@
           <!-- ADD ARCS -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
-            <h2>ADD ARCS</h2>
+            <h2>ADD EDGES</h2>
             <el-form ref="formRef" label-position="left" :inline="true"
                      :disabled="graph.nodes.length < 2">
               <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
@@ -97,7 +97,7 @@
           <!-- ARCS -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
-              <h2>ARCS</h2>
+              <h2>EDGES</h2>
               <el-table :data="graph.edges">
                 <el-table-column label="Source" prop="source"/>
                 <el-table-column label="Target" prop="target"/>
@@ -141,6 +141,32 @@
       </el-col>
     </el-row>
   </el-main>
+  <el-dialog draggable :show-close="false"
+             v-model="clickedUpload" :before-close="CloseDialog()">
+    <el-row>
+      <el-col :xs="8" :sm="8" :md="12" :lg="24" :xl="24">
+        <el-upload
+          ref="upload"
+          class="upload-demo"
+          drag
+          :limit="1"
+          :on-exceed="handleExceed"
+          accept="application/json"
+          :on-change="UploadFileMethod"
+          :auto-upload="false">
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            Drop file here or <em>click to upload</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">
+              only json files
+            </div>
+          </template>
+        </el-upload>
+      </el-col>
+    </el-row>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -148,12 +174,18 @@ import { Options, Vue } from 'vue-class-component';
 import Map, { Edge, Node } from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
-import { Delete, Watch } from '@element-plus/icons-vue';
+import { Delete, UploadFilled } from '@element-plus/icons-vue';
+import { ref } from 'vue';
+import { Prop, Watch, Emit } from 'vue-property-decorator';
+import { UploadFile } from 'element-plus/es/components/upload/src/upload.type';
 
+const upload = ref();
 @Options({
-  components: { GraphComponent, Delete },
+  components: { GraphComponent, Delete, UploadFilled },
 })
 export default class Home extends Vue {
+  fileUploaded = []
+
   formNode = {
     nodeName: '',
     nodeDescription: '',
@@ -177,6 +209,12 @@ export default class Home extends Vue {
 
   description = '';
 
+  dialogUploadVisible = true;
+
+  @Prop() readonly clickedUpload: boolean | undefined
+
+  @Prop() readonly downloadAction: boolean | undefined
+
   public graph: Map = new Map();
 
   public rules = {
@@ -196,6 +234,36 @@ export default class Home extends Vue {
     ],
   }
 
+  // eslint-disable-next-line max-len
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,class-methods-use-this
+  sleep() {
+    return new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
+  UploadFileMethod = async (file: UploadFile) => {
+    try {
+      const reader = new FileReader();
+      let result: any = null;
+      reader.onload = (event) => {
+        result = event.target;
+      };
+      reader.readAsText(file.raw);
+      await this.sleep();
+      if (typeof reader.result === 'string') {
+        const response = JSON.parse(reader.result);
+        this.graph.nodes = response.nodes;
+        this.graph.edges = response.edges;
+        this.graph.CreateNodes(this.nodes);
+        this.graph.CreateLinks(this.edges);
+        this.graph.CalculateWeight(this.edges);
+        this.graph.CalculateEntropy(this.edges);
+        this.CloseDialog();
+      }
+    } catch (error:any) {
+      console.log(error);
+    }
+  }
+
   // eslint-disable-next-line class-methods-use-this
   DeleteLink(selectedEdge: Edge):void {
     for (let i = 0; i < this.graph.edges.length; i += 1) {
@@ -203,9 +271,35 @@ export default class Home extends Vue {
         this.graph.edges.splice(i, 1);
         delete this.edges[selectedEdge.name];
         this.graph.CalculateWeight(this.edges);
-        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropy(this.edges);
         break;
       }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  handleExceed = (files: FileList, fileList: UploadFile[]) => {
+    ElMessage.warning(
+      `The limit is 1, you selected ${files.length} files this time, add up to ${
+        files.length + fileList.length
+      } totally`,
+    );
+  };
+
+  DownloadMethod() {
+    if (this.graph.nodes.length > 0) {
+      const data = JSON.stringify(this.graph);
+      localStorage.setItem('file', data);
+      const blob = new Blob([data], { type: 'text/plain' });
+      const e = document.createEvent('MouseEvents');
+      const a = document.createElement('a');
+      a.download = 'test.json';
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+      e.initEvent('click', true, false);
+      a.dispatchEvent(e);
+    } else {
+      ElMessage.error('Please, enter at least one node');
     }
   }
 
@@ -213,7 +307,7 @@ export default class Home extends Vue {
   DeleteNode(selectedNode: Node):void{
     if ((selectedNode.links !== undefined && selectedNode.links.length > 0)
       || this.graph.CheckNodesDelete(selectedNode)) {
-      ElMessage.error('Il nodo ha è collegato ad altri nodi, rimuovere prima tutti i collegamenti');
+      ElMessage.error('The node is connected to other nodes, remove all links first');
       return;
     }
     for (let i = 0; i < this.graph.nodes.length; i += 1) {
@@ -238,7 +332,7 @@ export default class Home extends Vue {
       );
       this.graph.CreateLinks(this.edges);
       this.graph.CalculateWeight(this.edges);
-      this.graph.CalculateEntropy();
+      this.graph.CalculateEntropy(this.edges);
       this.target = '';
       // eslint-disable-next-line no-restricted-syntax
       for (const i of this.graph.nodes) {
@@ -247,6 +341,7 @@ export default class Home extends Vue {
         }
       }
       this.source = '';
+      this.description = '';
     }
   }
 
@@ -261,6 +356,7 @@ export default class Home extends Vue {
               name: this.formNode.nodeName,
               description: this.formNode.nodeDescription,
               index: this.i,
+              size: 32,
               links: [],
               linkWeight: 0,
               entropy: 0,
@@ -290,10 +386,26 @@ export default class Home extends Vue {
       }
     }
   }
+
+  @Watch('downloadAction')
+  WatchDownloadAction(newVal:boolean) {
+    if (newVal) this.DownloadMethod();
+  }
+
+  @Emit()
+  CloseDialog() {
+    this.$emit('CloseDialog');
+  }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+
+.el-dialog {
+  --el-dialog-bg-color: transparent !important;
+  --el-dialog-box-shadow: rgba(0, 0, 0, 0) !important;
+
+}
 h3 {
   margin: 40px 0 0;
 }

@@ -12,10 +12,10 @@
       <text
         x="0"
         y="0"
-        :font-size="10 * scale"
+        :font-size="15 * scale"
         text-anchor="middle"
         dominant-baseline="central"
-        fill="#ffffff"
+        fill="#000000"
       >{{ text }}</text
       >
     </template>
@@ -47,7 +47,19 @@ export default class Home extends Vue {
     configs = reactive({
       node: {
         normal: {
-          color: '#4466cc88',
+          type: 'circle',
+          radius: (node) => node.size, // Use the value of each node object
+          color: (node) => node.color,
+          strokeWidth: 1,
+          strokeColor: '#000000',
+        },
+        hover: {
+          color: '#f0f0f0',
+        },
+        label: {
+          fontSize: 12,
+          color: '#000000',
+          direction: 'center',
         },
       },
       edge: {
