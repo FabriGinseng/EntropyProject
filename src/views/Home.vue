@@ -33,7 +33,6 @@
               <el-table :data="graph.nodes">
                 <el-table-column label="Name" prop="name"/>
                 <el-table-column label="Description" prop="description"/>
-                <el-table-column label="entropia" prop="entropy"/>
                 <el-table-column label="Operations">
                   <template #default="scope">
                     <el-button type="danger" @click="DeleteNode(scope.row)" circle>
@@ -139,31 +138,33 @@
             </el-card>
           </el-col>
         </el-row>
-        <el-button @click="DownloadMethod()">DOWNLOAD</el-button>
       </el-col>
     </el-row>
   </el-main>
-  <el-dialog v-model="clickedUpload" :before-close="CloseDialog()">
+  <el-dialog draggable :show-close="false"
+             v-model="clickedUpload" :before-close="CloseDialog()">
     <el-row>
-      <el-upload
-        ref="upload"
-        class="upload-demo"
-        drag
-        :limit="1"
-        :on-exceed="handleExceed"
-        accept="application/json"
-        :on-change="UploadFileMethod"
-        :auto-upload="false">
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">
-          Drop file here or <em>click to upload</em>
-        </div>
-        <template #tip>
-          <div class="el-upload__tip">
-            only json files
+      <el-col :xs="8" :sm="8" :md="12" :lg="24" :xl="24">
+        <el-upload
+          ref="upload"
+          class="upload-demo"
+          drag
+          :limit="1"
+          :on-exceed="handleExceed"
+          accept="application/json"
+          :on-change="UploadFileMethod"
+          :auto-upload="false">
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            Drop file here or <em>click to upload</em>
           </div>
-        </template>
-      </el-upload>
+          <template #tip>
+            <div class="el-upload__tip">
+              only json files
+            </div>
+          </template>
+        </el-upload>
+      </el-col>
     </el-row>
   </el-dialog>
 </template>
@@ -256,6 +257,7 @@ export default class Home extends Vue {
         this.graph.CreateLinks(this.edges);
         this.graph.CalculateWeight(this.edges);
         this.graph.CalculateEntropy(this.edges);
+        this.CloseDialog();
       }
     } catch (error:any) {
       console.log(error);
@@ -285,23 +287,27 @@ export default class Home extends Vue {
   };
 
   DownloadMethod() {
-    const data = JSON.stringify(this.graph);
-    localStorage.setItem('file', data);
-    const blob = new Blob([data], { type: 'text/plain' });
-    const e = document.createEvent('MouseEvents');
-    const a = document.createElement('a');
-    a.download = 'test.json';
-    a.href = window.URL.createObjectURL(blob);
-    a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-    e.initEvent('click', true, false);
-    a.dispatchEvent(e);
+    if (this.graph.nodes.length > 0) {
+      const data = JSON.stringify(this.graph);
+      localStorage.setItem('file', data);
+      const blob = new Blob([data], { type: 'text/plain' });
+      const e = document.createEvent('MouseEvents');
+      const a = document.createElement('a');
+      a.download = 'test.json';
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+      e.initEvent('click', true, false);
+      a.dispatchEvent(e);
+    } else {
+      ElMessage.error('Please, enter at least one node');
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
   DeleteNode(selectedNode: Node):void{
     if ((selectedNode.links !== undefined && selectedNode.links.length > 0)
       || this.graph.CheckNodesDelete(selectedNode)) {
-      ElMessage.error('Il nodo ha è collegato ad altri nodi, rimuovere prima tutti i collegamenti');
+      ElMessage.error('The node is connected to other nodes, remove all links first');
       return;
     }
     for (let i = 0; i < this.graph.nodes.length; i += 1) {
@@ -393,7 +399,13 @@ export default class Home extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+
+.el-dialog {
+  --el-dialog-bg-color: transparent !important;
+  --el-dialog-box-shadow: rgba(0, 0, 0, 0) !important;
+
+}
 h3 {
   margin: 40px 0 0;
 }

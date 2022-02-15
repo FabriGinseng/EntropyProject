@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import {
-  Message, Menu as IconMenu, Upload, Download, Setting, Delete, UploadFilled,
+  Message, Menu as IconMenu, Upload, Download, Setting, Delete,
 } from '@element-plus/icons-vue';
 import Home from '@/views/Home.vue';
 import { Options, Vue } from 'vue-class-component';
