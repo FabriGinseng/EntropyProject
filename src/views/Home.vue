@@ -142,7 +142,7 @@
     </el-row>
   </el-main>
   <el-dialog draggable :show-close="false"
-             v-model="clickedUpload" :before-close="CloseDialog()">
+             v-model="clickedUpload" >
     <el-row>
       <el-col :xs="8" :sm="8" :md="12" :lg="24" :xl="24">
         <el-upload
