@@ -16,6 +16,7 @@
 export interface Node{
   name:string;
   index: number
+  size: number;
   description:string;
   links:Array<string>;
   linkWeight:number;
@@ -71,7 +72,10 @@ export default class Map {
   public CreateNodes(nodesList:any):void {
     this.nodes.forEach((node) => {
       // eslint-disable-next-line no-param-reassign
-      nodesList[node.name] = { name: node.name, order: node.index };
+      nodesList[node.name] = {
+        name: node.name, order: node.index, size: node.name.length > 5 ? node.name.length * 5 : 16, color: 'white',
+      };
+      console.log(nodesList[node.name]);
     });
   }
 

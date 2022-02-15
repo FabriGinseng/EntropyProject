@@ -49,7 +49,7 @@
           <!-- ADD ARCS -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
-            <h2>ADD ARCS</h2>
+            <h2>ADD EDGES</h2>
             <el-form ref="formRef" label-position="left" :inline="true"
                      :disabled="graph.nodes.length < 2">
               <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
@@ -97,7 +97,7 @@
           <!-- ARCS -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
           <el-card>
-              <h2>ARCS</h2>
+              <h2>EDGES</h2>
               <el-table :data="graph.edges">
                 <el-table-column label="Source" prop="source"/>
                 <el-table-column label="Target" prop="target"/>
@@ -151,7 +151,7 @@
         :limit="1"
         :on-exceed="handleExceed"
         accept="application/json"
-        :on-change="handleChange"
+        :on-change="UploadFileMethod"
         :auto-upload="false">
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">
@@ -174,7 +174,7 @@ import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
 import { Delete, UploadFilled } from '@element-plus/icons-vue';
 import { ref } from 'vue';
-import { Prop } from 'vue-property-decorator';
+import { Prop, Watch } from 'vue-property-decorator';
 import { UploadFile } from 'element-plus/es/components/upload/src/upload.type';
 
 const upload = ref();
@@ -211,6 +211,8 @@ export default class Home extends Vue {
 
   @Prop() readonly clickedUpload: boolean | undefined
 
+  @Prop() readonly downloadAction: boolean | undefined
+
   public graph: Map = new Map();
 
   public rules = {
@@ -236,9 +238,8 @@ export default class Home extends Vue {
     return new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
-  handleChange = async (file: UploadFile, list: UploadFile[]) => {
+  UploadFileMethod = async (file: UploadFile) => {
     try {
-      console.log(file);
       const reader = new FileReader();
       let result: any = null;
       reader.onload = (event) => {
@@ -248,7 +249,6 @@ export default class Home extends Vue {
       await this.sleep();
       if (typeof reader.result === 'string') {
         const response = JSON.parse(reader.result);
-        console.log(response);
         this.graph.nodes = response.nodes;
         this.graph.edges = response.edges;
         this.graph.CreateNodes(this.nodes);
@@ -348,6 +348,7 @@ export default class Home extends Vue {
               name: this.formNode.nodeName,
               description: this.formNode.nodeDescription,
               index: this.i,
+              size: 32,
               links: [],
               linkWeight: 0,
               entropy: 0,
@@ -376,6 +377,11 @@ export default class Home extends Vue {
         this.nodesLink = this.graph.CheckCycle(i);
       }
     }
+  }
+
+  @Watch('downloadAction')
+  WatchDownloadAction(newVal:boolean) {
+    if (newVal) this.DownloadMethod();
   }
 }
 </script>

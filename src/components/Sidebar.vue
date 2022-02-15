@@ -14,7 +14,7 @@
               <el-icon><icon-menu /></el-icon>
               <template #title>Map</template>
             </el-menu-item>
-            <el-menu-item index="2" >
+            <el-menu-item index="2" @click="Download">
               <el-icon><download /></el-icon>
               <template #title>Download map</template>
             </el-menu-item>
@@ -25,7 +25,7 @@
           </el-menu>
         </el-scrollbar>
       </el-aside>
-      <Home :clickedUpload = "clickUp"/>
+      <Home :clickedUpload = "clickUp" :downloadAction = "downloadAction"/>
     </el-container>
   </el-container>
 </template>
@@ -45,11 +45,15 @@ import { Options, Vue } from 'vue-class-component';
 export default class Sidebar extends Vue {
 clickUp = false;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-public Select():void{
-  this.clickUp = !this.clickUp;
-  console.log(this.clickUp);
-}
+  downloadAction=false;
+
+  public Select():void{
+    this.clickUp = !this.clickUp;
+  }
+
+  public Download():void{
+    this.downloadAction = !this.downloadAction;
+  }
 }
 </script>
 
