@@ -25,7 +25,7 @@
           </el-menu>
         </el-scrollbar>
       </el-aside>
-      <Home @CloseDialog="CloseDialogEvent()"
+      <Home
             :clickedUpload = "clickUp" :downloadAction = "downloadAction"/>
     </el-container>
   </el-container>
