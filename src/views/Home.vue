@@ -142,7 +142,7 @@
       </el-col>
     </el-row>
   </el-main>
-  <el-dialog v-model="clickedUpload">
+  <el-dialog v-model="clickedUpload" :before-close="CloseDialog()">
     <el-row>
       <el-upload
         ref="upload"
@@ -174,7 +174,7 @@ import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
 import { Delete, UploadFilled } from '@element-plus/icons-vue';
 import { ref } from 'vue';
-import { Prop, Watch } from 'vue-property-decorator';
+import { Prop, Watch, Emit } from 'vue-property-decorator';
 import { UploadFile } from 'element-plus/es/components/upload/src/upload.type';
 
 const upload = ref();
@@ -382,6 +382,11 @@ export default class Home extends Vue {
   @Watch('downloadAction')
   WatchDownloadAction(newVal:boolean) {
     if (newVal) this.DownloadMethod();
+  }
+
+  @Emit()
+  CloseDialog() {
+    this.$emit('CloseDialog');
   }
 }
 </script>
