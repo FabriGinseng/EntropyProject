@@ -25,7 +25,8 @@
           </el-menu>
         </el-scrollbar>
       </el-aside>
-      <Home :clickedUpload = "clickUp" :downloadAction = "downloadAction"/>
+      <Home @CloseDialog="CloseDialogEvent()"
+            :clickedUpload = "clickUp" :downloadAction = "downloadAction"/>
     </el-container>
   </el-container>
 </template>
@@ -53,6 +54,10 @@ clickUp = false;
 
   public Download():void{
     this.downloadAction = !this.downloadAction;
+  }
+
+  public CloseDialogEvent():void{
+    this.clickUp = !this.clickUp;
   }
 }
 </script>
