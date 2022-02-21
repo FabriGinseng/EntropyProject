@@ -257,6 +257,8 @@ export default class Home extends Vue {
         this.graph.CreateLinks(this.edges);
         this.graph.CalculateWeight(this.edges);
         this.graph.CalculateEntropy(this.edges);
+        this.countName = 0;
+        this.countName = this.graph.edges.length - 1;
         this.CloseDialog();
       }
     } catch (error:any) {
