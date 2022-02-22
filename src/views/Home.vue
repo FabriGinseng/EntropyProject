@@ -1,6 +1,6 @@
 <template>
   <el-main>
-    <h1>CREATE YOUR CONCEPTUAL MAP</h1>
+    <h1>CREATE YOUR CONCEPT MAP</h1>
     <el-row :gutter="10">
       <!-- FIRST COLUMN -->
       <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -119,10 +119,10 @@
         <el-row>
           <!-- ENTROPY -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-            <el-card header="ENTROPY">
-              <label>TOTAL: {{ graph.totalEntropy }} </label>
+            <el-card header="H">
+              <label>H(CM): {{ graph.totalEntropy }} </label>
               <el-divider></el-divider>
-              <label>PERCENTAGE: {{ graph.totalEntropyPerc }} </label>
+              <label>H(CM)/Hmax: {{ graph.totalEntropyPerc }} </label>
             </el-card>
           </el-col>
         </el-row>
@@ -130,8 +130,9 @@
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <!-- MAP -->
-            <el-card header="MIND MAP">
+            <el-card header="CONCEPT MAP" >
               <GraphComponent
+                id="cardMap"
                 style="height: 810px"
                 :edges="edges"
                 :nodes="nodes"/>
@@ -154,7 +155,7 @@
           accept="application/json"
           :on-change="UploadFileMethod"
           :auto-upload="false">
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <el-icon class="el-icon--upload"><upload-filled/></el-icon>
           <div class="el-upload__text">
             Drop file here or <em>click to upload</em>
           </div>
@@ -178,6 +179,7 @@ import { Delete, UploadFilled } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import { Prop, Watch, Emit } from 'vue-property-decorator';
 import { UploadFile } from 'element-plus/es/components/upload/src/upload.type';
+import html2canvas from 'html2canvas';
 
 const upload = ref();
 @Options({
@@ -214,6 +216,8 @@ export default class Home extends Vue {
   @Prop() readonly clickedUpload: boolean | undefined
 
   @Prop() readonly downloadAction: boolean | undefined
+
+  @Prop() readonly downloadImageAction: boolean | undefined
 
   public graph: Map = new Map();
 
@@ -256,7 +260,10 @@ export default class Home extends Vue {
         this.graph.CreateNodes(this.nodes);
         this.graph.CreateLinks(this.edges);
         this.graph.CalculateWeight(this.edges);
-        this.graph.CalculateEntropy(this.edges);
+        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropyEdges(this.edges);
+        this.countName = 0;
+        this.countName = this.graph.edges.length;
         this.CloseDialog();
       }
     } catch (error:any) {
@@ -271,7 +278,8 @@ export default class Home extends Vue {
         this.graph.edges.splice(i, 1);
         delete this.edges[selectedEdge.name];
         this.graph.CalculateWeight(this.edges);
-        this.graph.CalculateEntropy(this.edges);
+        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropyEdges(this.edges);
         break;
       }
     }
@@ -285,6 +293,35 @@ export default class Home extends Vue {
       } totally`,
     );
   };
+
+  // eslint-disable-next-line class-methods-use-this
+  DownloadImageMapMethod() {
+    const cardMap = document.getElementById('cardMap');
+    const date = new Date();
+
+    const options = {
+      weekday: 'short',
+      year: 'numeric',
+      month: '2-digit',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+
+    console.log(
+      date.toLocaleDateString('it', options), // en is language option, you may specify..
+    );
+    if (cardMap !== null) {
+      html2canvas(cardMap).then(
+        (canvas) => {
+          const link = document.createElement('a');
+          link.download = `MappaConcettuale${date.toLocaleDateString('it', options)}.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+        },
+      );
+    }
+  }
 
   DownloadMethod() {
     if (this.graph.nodes.length > 0) {
@@ -332,7 +369,8 @@ export default class Home extends Vue {
       );
       this.graph.CreateLinks(this.edges);
       this.graph.CalculateWeight(this.edges);
-      this.graph.CalculateEntropy(this.edges);
+      this.graph.CalculateEntropy();
+      this.graph.CalculateEntropyEdges(this.edges);
       this.target = '';
       // eslint-disable-next-line no-restricted-syntax
       for (const i of this.graph.nodes) {
@@ -390,6 +428,11 @@ export default class Home extends Vue {
   @Watch('downloadAction')
   WatchDownloadAction(newVal:boolean) {
     if (newVal) this.DownloadMethod();
+  }
+
+  @Watch('downloadImageAction')
+  WatchDownloadImageAction(newVal:boolean) {
+    if (newVal) this.DownloadImageMapMethod();
   }
 
   @Emit()

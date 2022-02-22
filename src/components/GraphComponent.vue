@@ -22,6 +22,7 @@
   <template #edge-label="{ edge, ...slotProps }">
     <v-edge-label
       :text="edge.label"
+      style="text-wrap: normal"
       align="center"
       :vertical-align="verticalAlign"
       v-bind="slotProps"
