@@ -73,7 +73,7 @@ export default class Map {
     this.nodes.forEach((node) => {
       // eslint-disable-next-line no-param-reassign
       nodesList[node.name] = {
-        name: node.name, order: node.index, size: node.name.length > 3 ? node.name.length * 5 : node.name.length * 20, color: 'white',
+        name: node.name, order: node.index, size: 50, color: 'white',
       };
     });
   }

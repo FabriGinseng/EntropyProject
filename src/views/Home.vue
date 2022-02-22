@@ -1,6 +1,6 @@
 <template>
   <el-main>
-    <h1>CREATE YOUR CONCEPTUAL MAP</h1>
+    <h1>CREATE YOUR CONCEPT MAP</h1>
     <el-row :gutter="10">
       <!-- FIRST COLUMN -->
       <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -120,9 +120,9 @@
           <!-- ENTROPY -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <el-card header="ENTROPY">
-              <label>TOTAL: {{ graph.totalEntropy }} </label>
+              <label>H(CM): {{ graph.totalEntropy }} </label>
               <el-divider></el-divider>
-              <label>PERCENTAGE: {{ graph.totalEntropyPerc }} </label>
+              <label>H(CM)/Hmax: {{ graph.totalEntropyPerc }} </label>
             </el-card>
           </el-col>
         </el-row>
@@ -130,8 +130,9 @@
         <el-row>
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <!-- MAP -->
-            <el-card header="MIND MAP">
+            <el-card header="CONCEPT MAP" >
               <GraphComponent
+                id="cardMap"
                 style="height: 810px"
                 :edges="edges"
                 :nodes="nodes"/>
@@ -154,7 +155,7 @@
           accept="application/json"
           :on-change="UploadFileMethod"
           :auto-upload="false">
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <el-icon class="el-icon--upload"><upload-filled/></el-icon>
           <div class="el-upload__text">
             Drop file here or <em>click to upload</em>
           </div>
@@ -178,6 +179,7 @@ import { Delete, UploadFilled } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import { Prop, Watch, Emit } from 'vue-property-decorator';
 import { UploadFile } from 'element-plus/es/components/upload/src/upload.type';
+import html2canvas from 'html2canvas';
 
 const upload = ref();
 @Options({
@@ -214,6 +216,8 @@ export default class Home extends Vue {
   @Prop() readonly clickedUpload: boolean | undefined
 
   @Prop() readonly downloadAction: boolean | undefined
+
+  @Prop() readonly downloadImageAction: boolean | undefined
 
   public graph: Map = new Map();
 
@@ -259,7 +263,7 @@ export default class Home extends Vue {
         this.graph.CalculateEntropy();
         this.graph.CalculateEntropyEdges(this.edges);
         this.countName = 0;
-        this.countName = this.graph.edges.length - 1;
+        this.countName = this.graph.edges.length;
         this.CloseDialog();
       }
     } catch (error:any) {
@@ -289,6 +293,21 @@ export default class Home extends Vue {
       } totally`,
     );
   };
+
+  // eslint-disable-next-line class-methods-use-this
+  DownloadImageMapMethod() {
+    const cardMap = document.getElementById('cardMap');
+    if (cardMap !== null) {
+      html2canvas(cardMap).then(
+        (canvas) => {
+          const link = document.createElement('a');
+          link.download = 'filename1.png';
+          link.href = canvas.toDataURL();
+          link.click();
+        },
+      );
+    }
+  }
 
   DownloadMethod() {
     if (this.graph.nodes.length > 0) {
@@ -395,6 +414,11 @@ export default class Home extends Vue {
   @Watch('downloadAction')
   WatchDownloadAction(newVal:boolean) {
     if (newVal) this.DownloadMethod();
+  }
+
+  @Watch('downloadImageAction')
+  WatchDownloadImageAction(newVal:boolean) {
+    if (newVal) this.DownloadImageMapMethod();
   }
 
   @Emit()
