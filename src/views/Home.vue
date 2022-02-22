@@ -297,11 +297,25 @@ export default class Home extends Vue {
   // eslint-disable-next-line class-methods-use-this
   DownloadImageMapMethod() {
     const cardMap = document.getElementById('cardMap');
+    const date = new Date();
+
+    const options = {
+      weekday: 'short',
+      year: 'numeric',
+      month: '2-digit',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+
+    console.log(
+      date.toLocaleDateString('it', options), // en is language option, you may specify..
+    );
     if (cardMap !== null) {
       html2canvas(cardMap).then(
         (canvas) => {
           const link = document.createElement('a');
-          link.download = 'filename1.png';
+          link.download = `MappaConcettuale${date.toLocaleDateString('it', options)}.png`;
           link.href = canvas.toDataURL();
           link.click();
         },

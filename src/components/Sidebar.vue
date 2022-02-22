@@ -20,7 +20,8 @@
               </template>
               <el-menu-item-group>
                 <el-menu-item index="1-1" @click="Download">Download json map file</el-menu-item>
-                <el-menu-item index="1-2" @click="Download">Download image map file</el-menu-item>
+                <el-menu-item index="1-2"
+                              @click="DownloadImageMap">Download image map file</el-menu-item>
               </el-menu-item-group>
             </el-sub-menu>
             <el-menu-item index="3" @click="Select">
