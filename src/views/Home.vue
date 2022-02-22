@@ -256,7 +256,8 @@ export default class Home extends Vue {
         this.graph.CreateNodes(this.nodes);
         this.graph.CreateLinks(this.edges);
         this.graph.CalculateWeight(this.edges);
-        this.graph.CalculateEntropy(this.edges);
+        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropyEdges(this.edges);
         this.countName = 0;
         this.countName = this.graph.edges.length - 1;
         this.CloseDialog();
@@ -273,7 +274,8 @@ export default class Home extends Vue {
         this.graph.edges.splice(i, 1);
         delete this.edges[selectedEdge.name];
         this.graph.CalculateWeight(this.edges);
-        this.graph.CalculateEntropy(this.edges);
+        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropyEdges(this.edges);
         break;
       }
     }
@@ -334,7 +336,8 @@ export default class Home extends Vue {
       );
       this.graph.CreateLinks(this.edges);
       this.graph.CalculateWeight(this.edges);
-      this.graph.CalculateEntropy(this.edges);
+      this.graph.CalculateEntropy();
+      this.graph.CalculateEntropyEdges(this.edges);
       this.target = '';
       // eslint-disable-next-line no-restricted-syntax
       for (const i of this.graph.nodes) {

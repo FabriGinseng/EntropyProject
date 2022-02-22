@@ -119,22 +119,25 @@ export default class Map {
     });
   }
 
-  /* public CalculateEntropyEdges():void {
+  public CalculateEntropyEdges(listEdges:any):void {
     this.nodes.forEach((node) => {
-      if (node.links !== undefined && node.links.length > 0) {
-        const entropy = -1 * (node.links.length * (node.linkWeight * (Math.log2(node.linkWeight))));
-        // eslint-disable-next-line no-param-reassign
-        node.entropy = Number(entropy.toFixed(3));
-      }
+      const entropy = -1 * (node.linkWeight * (Math.log2(node.linkWeight)));
+      this.edges.forEach((edge) => {
+        if (edge.source === node.name) {
+          // eslint-disable-next-line no-param-reassign
+          listEdges[edge.name].label = `${edge.label} (${entropy.toFixed(2)})`;
+        }
+      });
     });
-  } */
+  }
 
   /**
    * The function calculates the nodes entropy
    */
-  public CalculateEntropy(listEdges:any):void {
+  public CalculateEntropy():void {
     this.nodes.forEach((node) => {
       const link:number[] = [];
+
       this.nodes.forEach((nodeEnter:Node) => {
         if (nodeEnter.links !== undefined && nodeEnter.links.length > 0) {
           // eslint-disable-next-line no-restricted-syntax
@@ -151,12 +154,12 @@ export default class Map {
           // eslint-disable-next-line no-param-reassign
           node.entropy *= -1;
         }
-        this.edges.forEach((edge) => {
+        /* this.edges.forEach((edge) => {
           if (edge.target === node.name) {
             // eslint-disable-next-line no-param-reassign
             listEdges[edge.name].label = `${edge.label} (${node.entropy.toFixed(3)})`;
           }
-        });
+        }); */
       });
       this.GraphEntropy();
       // eslint-disable-next-line max-len
