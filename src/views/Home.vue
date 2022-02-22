@@ -119,7 +119,7 @@
         <el-row>
           <!-- ENTROPY -->
           <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-            <el-card header="ENTROPY">
+            <el-card header="H">
               <label>H(CM): {{ graph.totalEntropy }} </label>
               <el-divider></el-divider>
               <label>H(CM)/Hmax: {{ graph.totalEntropyPerc }} </label>
