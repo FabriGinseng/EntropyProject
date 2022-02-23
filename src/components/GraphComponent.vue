@@ -6,13 +6,13 @@
   >
     <template
       #override-node-label="{
-        scale, text
+        text
       }"
     >
       <text
         x="0"
         y="0"
-        :font-size="15 * scale"
+        :font-size="12"
         text-anchor="middle"
         dominant-baseline="central"
         fill="#000000"
@@ -48,8 +48,10 @@ export default class Home extends Vue {
     configs = reactive({
       node: {
         normal: {
-          type: 'circle',
+          type: 'rect',
           radius: (node) => node.size, // Use the value of each node object
+          width: 150,
+          height: 100,
           color: (node) => node.color,
           strokeWidth: 1,
           strokeColor: '#000000',
@@ -58,8 +60,9 @@ export default class Home extends Vue {
           color: '#f0f0f0',
         },
         label: {
-          fontSize: 12,
+          fontSize: 10,
           color: '#000000',
+          lineHeight: 1.1,
           direction: 'center',
         },
       },

@@ -45,11 +45,23 @@ export interface Edge {
  * @member nodes array of nodes
  * @member edges array of edges
  * @member totalEntropy
+ * @member name map name
+ * @member date creation date
+ * @member author author details
+ * @member description
  */
 export default class Map {
   nodes: Node[];
 
   edges: Edge[];
+
+  name: string;
+
+  author: string;
+
+  date: Date;
+
+  description:string;
 
   totalEntropy: number;
 
@@ -61,6 +73,10 @@ export default class Map {
   constructor() {
     this.nodes = [];
     this.edges = [];
+    this.name = '';
+    this.author = '';
+    this.description = '';
+    this.date = new Date();
     this.totalEntropy = 0;
     this.totalEntropyPerc = 0;
   }
@@ -119,6 +135,11 @@ export default class Map {
     });
   }
 
+  /**
+   * the function return the edge entropy
+   * @param listEdges
+   * @constructor
+   */
   public CalculateEntropyEdges(listEdges:any):void {
     this.nodes.forEach((node) => {
       const entropy = -1 * (node.linkWeight * (Math.log2(node.linkWeight)));

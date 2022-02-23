@@ -11,20 +11,24 @@
                    default-active="1">
             <el-menu-item index="1" >
               <el-icon><icon-menu /></el-icon>
-              <template #title>Map</template>
+              <template #title>Map detail</template>
             </el-menu-item>
-            <el-sub-menu index="2" >
+            <el-menu-item index="2" @click="AddFormMap">
+              <el-icon><edit-pen /></el-icon>
+              <template #title>create Map</template>
+            </el-menu-item>
+            <el-sub-menu index="3" >
               <template #title>
                 <el-icon><download /></el-icon>
                 <span>Download</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="1-1" @click="Download">Download json map file</el-menu-item>
-                <el-menu-item index="1-2"
+                <el-menu-item index="3-1" @click="Download">Download json map file</el-menu-item>
+                <el-menu-item index="3-2"
                               @click="DownloadImageMap">Download image map file</el-menu-item>
               </el-menu-item-group>
             </el-sub-menu>
-            <el-menu-item index="3" @click="Select">
+            <el-menu-item index="4" @click="Select">
               <el-icon><upload /></el-icon>
               <template #title>upload map</template>
             </el-menu-item>
@@ -32,25 +36,27 @@
       <Home
         @CloseDialog="CloseDialogEvent"
             :clickedUpload = "clickUp" :downloadImageAction = "downloadImageAction"
-            :downloadAction = "downloadAction"/>
+            :downloadAction = "downloadAction" :clickedadddetailmap="visibleForm"/>
     </el-container>
   </el-container>
 </template>
 
 <script lang="ts">
 import {
-  Message, Menu as IconMenu, Upload, Download, Setting, Delete,
+  Message, Menu as IconMenu, Upload, Download, Setting, Delete, EditPen,
 } from '@element-plus/icons-vue';
 import Home from '@/views/Home.vue';
 import { Options, Vue } from 'vue-class-component';
 
 @Options({
   components: {
-    Message, IconMenu, Upload, Download, Setting, Delete, Home,
+    Message, IconMenu, Upload, Download, Setting, Delete, Home, EditPen,
   },
 })
 export default class Sidebar extends Vue {
-clickUp = false;
+  clickUp = false;
+
+  visibleForm = false;
 
   downloadAction=false;
 
@@ -58,6 +64,10 @@ clickUp = false;
 
   public Select():void{
     this.clickUp = !this.clickUp;
+  }
+
+  public AddFormMap():void{
+    this.visibleForm = !this.visibleForm;
   }
 
   public Download():void{
