@@ -142,7 +142,7 @@
       </el-col>
     </el-row>
   </el-main>
-  <el-dialog draggable :show-close="false"
+  <el-dialog draggable :show-close="false" :destroy-on-close="true"
              v-model="clickedUpload" >
     <el-row>
       <el-col :xs="8" :sm="8" :md="12" :lg="24" :xl="24">
@@ -151,6 +151,7 @@
           class="upload-demo"
           drag
           :limit="1"
+          :on-remove="handleRemove"
           :on-exceed="handleExceed"
           accept="application/json"
           :on-change="UploadFileMethod"
@@ -165,6 +166,28 @@
             </div>
           </template>
         </el-upload>
+      </el-col>
+    </el-row>
+  </el-dialog>
+
+  <el-dialog v-model="visibleFileName" :destroy-on-close="true">
+    <el-row>
+      <el-col :xs="8" :sm="8" :md="12" :lg="12" :xl="12">
+      <el-input placeholder="Enter filename" v-model="nameMap"/>
+      </el-col>
+      <el-col :xs="8" :sm="8" :md="12" :lg="12" :xl="12">
+        <el-button type="info" @click="DownloadMethod">Download</el-button>
+      </el-col>
+    </el-row>
+  </el-dialog>
+
+  <el-dialog v-model="visibleFileNameImage" :destroy-on-close="true">
+    <el-row>
+      <el-col :xs="8" :sm="8" :md="12" :lg="12" :xl="12">
+        <el-input placeholder="Enter filename" v-model="nameMapImage"/>
+      </el-col>
+      <el-col :xs="8" :sm="8" :md="12" :lg="12" :xl="12">
+        <el-button type="info" @click="DownloadImageMapMethod">Download</el-button>
       </el-col>
     </el-row>
   </el-dialog>
@@ -187,6 +210,14 @@ const upload = ref();
 })
 export default class Home extends Vue {
   fileUploaded = []
+
+  visibleFileName=false;
+
+  visibleFileNameImage=false;
+
+  nameMapImage= '';
+
+  nameMap = '';
 
   formNode = {
     nodeName: '',
@@ -244,7 +275,11 @@ export default class Home extends Vue {
     return new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
-  UploadFileMethod = async (file: UploadFile) => {
+  handleRemove = async (file: UploadFile, fileList:FileList[]) => {
+    fileList.pop();
+  }
+
+  UploadFileMethod = async (file: UploadFile, fileList:FileList[]) => {
     try {
       const reader = new FileReader();
       let result: any = null;
@@ -265,6 +300,7 @@ export default class Home extends Vue {
         this.countName = 0;
         this.countName = this.graph.edges.length;
         this.CloseDialog();
+        this.handleRemove(file, fileList);
       }
     } catch (error:any) {
       console.log(error);
@@ -297,25 +333,11 @@ export default class Home extends Vue {
   // eslint-disable-next-line class-methods-use-this
   DownloadImageMapMethod() {
     const cardMap = document.getElementById('cardMap');
-    const date = new Date();
-
-    const options = {
-      weekday: 'short',
-      year: 'numeric',
-      month: '2-digit',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    };
-
-    console.log(
-      date.toLocaleDateString('it', options), // en is language option, you may specify..
-    );
     if (cardMap !== null) {
       html2canvas(cardMap).then(
         (canvas) => {
           const link = document.createElement('a');
-          link.download = `MappaConcettuale${date.toLocaleDateString('it', options)}.png`;
+          link.download = `${this.nameMapImage}.png`;
           link.href = canvas.toDataURL();
           link.click();
         },
@@ -330,9 +352,9 @@ export default class Home extends Vue {
       const blob = new Blob([data], { type: 'text/plain' });
       const e = document.createEvent('MouseEvents');
       const a = document.createElement('a');
-      a.download = 'test.json';
+      a.download = `${this.nameMap}.json`;
       a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+      a.dataset.downloadurl = [`${this.nameMap}.json`, a.download, a.href].join(':');
       e.initEvent('click', true, false);
       a.dispatchEvent(e);
     } else {
@@ -427,12 +449,12 @@ export default class Home extends Vue {
 
   @Watch('downloadAction')
   WatchDownloadAction(newVal:boolean) {
-    if (newVal) this.DownloadMethod();
+    if (newVal) this.visibleFileName = !this.visibleFileName;
   }
 
   @Watch('downloadImageAction')
   WatchDownloadImageAction(newVal:boolean) {
-    if (newVal) this.DownloadImageMapMethod();
+    if (newVal) this.visibleFileNameImage = !this.visibleFileNameImage;
   }
 
   @Emit()
@@ -442,13 +464,8 @@ export default class Home extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
-.el-dialog {
-  --el-dialog-bg-color: transparent !important;
-  --el-dialog-box-shadow: rgba(0, 0, 0, 0) !important;
-
-}
 h3 {
   margin: 40px 0 0;
 }

@@ -30,6 +30,7 @@
             </el-menu-item>
           </el-menu>
       <Home
+        @CloseDialog="CloseDialogEvent"
             :clickedUpload = "clickUp" :downloadImageAction = "downloadImageAction"
             :downloadAction = "downloadAction"/>
     </el-container>
