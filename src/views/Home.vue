@@ -290,6 +290,15 @@ export default class Home extends Vue {
       await this.sleep();
       if (typeof reader.result === 'string') {
         const response = JSON.parse(reader.result);
+        this.graph = new Map();
+        // eslint-disable-next-line guard-for-in,no-restricted-syntax
+        for (const nodesKey in this.nodes) {
+          delete this.nodes[nodesKey];
+        }
+        // eslint-disable-next-line guard-for-in,no-restricted-syntax
+        for (const edgesKey in this.edges) {
+          delete this.edges[edgesKey];
+        }
         this.graph.nodes = response.nodes;
         this.graph.edges = response.edges;
         this.graph.CreateNodes(this.nodes);
