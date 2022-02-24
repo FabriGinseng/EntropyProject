@@ -1,17 +1,17 @@
 <template>
   <el-main>
-    <h1>CREATE YOUR CONCEPT MAP</h1>
+    <h1>CONCEPT MAP {{graph.name}} by {{graph.author}}</h1>
     <el-row :gutter="10">
       <!-- FIRST COLUMN -->
       <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
         <el-row>
           <!-- ADD NODE -->
-          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-          <el-card>
-            <h2>ADD NODE</h2>
-            <el-form ref="formNodes" :model="formNode" :rules="rules" label-position="top"
-                     label-width="150px">
-                <el-form-item label="Name" prop="nodeName" >
+          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+            <el-card>
+              <h2>ADD NODE</h2>
+              <el-form ref="formNodes" :model="formNode" :rules="rules" label-position="top"
+                       label-width="150px">
+                <el-form-item label="Name" prop="nodeName">
                   <el-input v-model="formNode.nodeName"></el-input>
                 </el-form-item>
                 <el-form-item label="Description" prop="nodeDescription">
@@ -21,40 +21,42 @@
                   <el-button @click="AddNode()">ADD</el-button>
                 </el-form-item>
               </el-form>
-          </el-card>
+            </el-card>
           </el-col>
         </el-row>
         <el-divider border-style="double"></el-divider>
         <!-- NODES -->
         <el-row>
-          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-          <el-card>
+          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+            <el-card>
               <h2>NODES</h2>
               <el-table :data="graph.nodes">
                 <el-table-column label="Name" prop="name"/>
                 <el-table-column label="Description" prop="description"/>
                 <el-table-column label="Operations">
                   <template #default="scope">
-                    <el-button type="danger" @click="DeleteNode(scope.row)" circle>
-                      <el-icon><delete /></el-icon>
+                    <el-button circle type="danger" @click="DeleteNode(scope.row)">
+                      <el-icon>
+                        <delete/>
+                      </el-icon>
                     </el-button>
                   </template>
                 </el-table-column>
               </el-table>
-          </el-card>
+            </el-card>
           </el-col>
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
           <!-- ADD ARCS -->
-          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-          <el-card>
-            <h2>ADD EDGES</h2>
-            <el-form ref="formRef" label-position="left" :inline="true"
-                     :disabled="graph.nodes.length < 2">
-              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
+          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+            <el-card>
+              <h2>ADD EDGES</h2>
+              <el-form ref="formRef" :disabled="graph.nodes.length < 2" :inline="true"
+                       label-position="left">
+                <el-col :lg="12" :md="24" :sm="24" :xl="6" :xs="24">
                   <el-form-item label="From node">
-                    <el-select v-model="source" @change="SelectSource"  placeholder="Select">
+                    <el-select v-model="source" placeholder="Select" @change="SelectSource">
                       <el-option
                         v-for="item in graph.nodes"
                         :key="item.name"
@@ -64,13 +66,13 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
+                <el-col :xs="24" :sm="24" :md="24"  :lg="12" :xl="6">
                   <el-form-item label="To node">
                     <el-select v-model="target" placeholder="Select">
                       <el-option
                         v-for="item in nodesLink"
-                        :disabled="item.name === source"
                         :key="item.name"
+                        :disabled="item.name === source"
                         :label="item.name"
                         :value="item.name"
                       >
@@ -78,47 +80,49 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
-                <el-form-item label="Description">
-                  <el-input v-model="description" placeholder="add description"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="6">
-              <el-form-item>
-                  <el-button :disabled="nodesLink.length === 0" @click="AddLink()">ADD</el-button>
-                </el-form-item>
-              </el-col>
+                <el-col :lg="12" :md="24" :sm="24" :xl="6" :xs="24">
+                  <el-form-item label="Description">
+                    <el-input v-model="description" placeholder="add description"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :lg="12" :md="24" :sm="24" :xl="6" :xs="24">
+                  <el-form-item>
+                    <el-button :disabled="nodesLink.length === 0" @click="AddLink()">ADD</el-button>
+                  </el-form-item>
+                </el-col>
               </el-form>
-          </el-card>
+            </el-card>
           </el-col>
         </el-row>
         <el-divider border-style="double"></el-divider>
         <el-row>
           <!-- ARCS -->
-          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-          <el-card>
+          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+            <el-card>
               <h2>EDGES</h2>
               <el-table :data="graph.edges">
                 <el-table-column label="Source" prop="source"/>
                 <el-table-column label="Target" prop="target"/>
                 <el-table-column label="Operations">
                   <template #default="scope">
-                    <el-button type="danger" @click="DeleteLink(scope.row)" circle>
-                      <el-icon><delete /></el-icon>
+                    <el-button circle type="danger" @click="DeleteLink(scope.row)">
+                      <el-icon>
+                        <delete/>
+                      </el-icon>
                     </el-button>
                   </template>
                 </el-table-column>
               </el-table>
-          </el-card>
+            </el-card>
           </el-col>
         </el-row>
       </el-col>
 
       <!-- SECOND COLUMN -->
-      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+      <el-col :lg="12" :md="12" :sm="24" :xl="12" :xs="24">
         <el-row>
           <!-- ENTROPY -->
-          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
             <el-card header="H">
               <label>H(CM): {{ graph.totalEntropy }} </label>
               <el-divider></el-divider>
@@ -128,35 +132,37 @@
         </el-row>
         <el-divider border-style="double"/>
         <el-row>
-          <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
             <!-- MAP -->
-            <el-card header="CONCEPT MAP" >
+            <el-card header="CONCEPT MAP">
               <GraphComponent
                 id="cardMap"
-                style="height: 810px"
                 :edges="edges"
-                :nodes="nodes"/>
+                :nodes="nodes"
+                style="height: 810px"/>
             </el-card>
           </el-col>
         </el-row>
       </el-col>
     </el-row>
   </el-main>
-  <el-dialog draggable :show-close="false" :destroy-on-close="true"
-             v-model="clickedUpload" >
+  <el-dialog v-model="clickedUpload" :destroy-on-close="true" :show-close="false"
+             draggable>
     <el-row>
-      <el-col :xs="8" :sm="8" :md="12" :lg="24" :xl="24">
+      <el-col :lg="24" :md="12" :sm="8" :xl="24" :xs="8">
         <el-upload
           ref="upload"
-          class="upload-demo"
-          drag
+          :auto-upload="false"
           :limit="1"
-          :on-remove="handleRemove"
-          :on-exceed="handleExceed"
-          accept="application/json"
           :on-change="UploadFileMethod"
-          :auto-upload="false">
-          <el-icon class="el-icon--upload"><upload-filled/></el-icon>
+          :on-exceed="handleExceed"
+          :on-remove="handleRemove"
+          accept="application/json"
+          class="upload-demo"
+          drag>
+          <el-icon class="el-icon--upload">
+            <upload-filled/>
+          </el-icon>
           <div class="el-upload__text">
             Drop file here or <em>click to upload</em>
           </div>
@@ -172,10 +178,10 @@
 
   <el-dialog v-model="visibleFileName" :destroy-on-close="true">
     <el-row>
-      <el-col :xs="8" :sm="8" :md="12" :lg="12" :xl="12">
-      <el-input placeholder="Enter filename" v-model="nameMap"/>
+      <el-col :lg="12" :md="12" :sm="8" :xl="12" :xs="8">
+        <el-input v-model="nameMap" placeholder="Enter filename"/>
       </el-col>
-      <el-col :xs="8" :sm="8" :md="12" :lg="12" :xl="12">
+      <el-col :lg="12" :md="12" :sm="8" :xl="12" :xs="8">
         <el-button type="info" @click="DownloadMethod">Download</el-button>
       </el-col>
     </el-row>
@@ -183,11 +189,96 @@
 
   <el-dialog v-model="visibleFileNameImage" :destroy-on-close="true">
     <el-row>
-      <el-col :xs="8" :sm="8" :md="12" :lg="12" :xl="12">
-        <el-input placeholder="Enter filename" v-model="nameMapImage"/>
+      <el-col :lg="12" :md="12" :sm="8" :xl="12" :xs="8">
+        <el-input v-model="nameMapImage" placeholder="Enter filename"/>
       </el-col>
-      <el-col :xs="8" :sm="8" :md="12" :lg="12" :xl="12">
+      <el-col :lg="12" :md="12" :sm="8" :xl="12" :xs="8">
         <el-button type="info" @click="DownloadImageMapMethod">Download</el-button>
+      </el-col>
+    </el-row>
+  </el-dialog>
+
+  <el-dialog v-model="visibleAddForm" width="30%"
+             :before-close="NoCLoseMethod" :show-close="false">
+    <el-tabs type="border-card">
+      <el-tab-pane label="Add map detail">
+        <el-row :gutter="10">
+          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+            <el-form ref="formMapRef" label-position="top" :model="graph" :rules="rulesFormMap"
+                     label-width="150px">
+              <el-row>
+                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                  <el-form-item label="Map name" prop="name">
+                    <el-input v-model="graph.name"
+                              placeholder="enter name"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <el-row>
+                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                  <el-form-item label="Author" prop="author">
+                    <el-input v-model="graph.author"
+                              placeholder="add description"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <el-row>
+                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                  <el-form-item label="Data">
+                    <el-date-picker disabled v-model="graph.date"></el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <el-row>
+                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                  <el-form-item label="Description">
+                    <el-input v-model="graph.description" placeholder="add description"
+                              type="textarea"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="Upload">
+        <el-upload
+          ref="upload"
+          :auto-upload="false"
+          :limit="1"
+          :on-change="UploadFileMethod"
+          :on-exceed="handleExceed"
+          :on-remove="handleRemove"
+          accept="application/json"
+          class="upload-demo"
+          drag>
+          <el-icon class="el-icon--upload">
+            <upload-filled/>
+          </el-icon>
+          <div class="el-upload__text">
+            Drop file here or <em>click to upload</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">
+              only json files
+            </div>
+          </template>
+        </el-upload>
+      </el-tab-pane>
+    </el-tabs>
+    <el-row justify="end" style="padding: 10px;">
+      <el-col :lg="12" :md="12" :sm="12" :xl="4" :xs="24">
+        <el-form-item>
+          <el-button type="danger" @click="CloseDialogForm">Close</el-button>
+        </el-form-item>
+      </el-col>
+      <el-col :lg="12" :md="12" :sm="12" :xl="4" :xs="24">
+        <el-form-item>
+          <el-button type="success" @click="AddFormMap">Create</el-button>
+        </el-form-item>
       </el-col>
     </el-row>
   </el-dialog>
@@ -200,39 +291,43 @@ import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
 import { Delete, UploadFilled } from '@element-plus/icons-vue';
 import { ref } from 'vue';
-import { Prop, Watch, Emit } from 'vue-property-decorator';
+import { Emit, Prop, Watch } from 'vue-property-decorator';
 import { UploadFile } from 'element-plus/es/components/upload/src/upload.type';
 import html2canvas from 'html2canvas';
 
 const upload = ref();
 @Options({
-  components: { GraphComponent, Delete, UploadFilled },
+  components: {
+    GraphComponent,
+    Delete,
+    UploadFilled,
+  },
 })
 export default class Home extends Vue {
-  fileUploaded = []
+  visibleFileName = false;
 
-  visibleFileName=false;
+  visibleFileNameImage = false;
 
-  visibleFileNameImage=false;
+  visibleAddForm = true;
 
-  nameMapImage= '';
+  nameMapImage = '';
 
   nameMap = '';
 
   formNode = {
     nodeName: '',
     nodeDescription: '',
-  }
+  };
 
   x = 0;
 
   i = 0;
 
-  nodes : {[index:string]:any} = {};
+  nodes: { [index: string]: any } = {};
 
   nodesLink = {};
 
-  edges : {[index:string]:any} = {};
+  edges: { [index: string]: any } = {};
 
   source = '';
 
@@ -244,11 +339,13 @@ export default class Home extends Vue {
 
   dialogUploadVisible = true;
 
-  @Prop() readonly clickedUpload: boolean | undefined
+  @Prop() readonly clickedUpload: boolean | undefined;
 
-  @Prop() readonly downloadAction: boolean | undefined
+  @Prop() readonly downloadAction: boolean | undefined;
 
-  @Prop() readonly downloadImageAction: boolean | undefined
+  @Prop() readonly downloadImageAction: boolean | undefined;
+
+  @Prop() readonly clickedadddetailmap: boolean | undefined;
 
   public graph: Map = new Map();
 
@@ -267,7 +364,24 @@ export default class Home extends Vue {
         trigger: 'blur',
       },
     ],
-  }
+  };
+
+  public rulesFormMap = {
+    name: [
+      {
+        required: true,
+        message: 'Campo obbligatorio',
+        trigger: 'blur',
+      },
+    ],
+    author: [
+      {
+        required: true,
+        message: 'Campo obbligatorio',
+        trigger: 'blur',
+      },
+    ],
+  };
 
   // eslint-disable-next-line max-len
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,class-methods-use-this
@@ -275,11 +389,15 @@ export default class Home extends Vue {
     return new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
-  handleRemove = async (file: UploadFile, fileList:FileList[]) => {
-    fileList.pop();
+  NoCLoseMethod() {
+    this.visibleAddForm = true;
   }
 
-  UploadFileMethod = async (file: UploadFile, fileList:FileList[]) => {
+  handleRemove = async (file: UploadFile, fileList: FileList[]) => {
+    fileList.pop();
+  };
+
+  UploadFileMethod = async (file: UploadFile, fileList: FileList[]) => {
     try {
       const reader = new FileReader();
       let result: any = null;
@@ -299,6 +417,10 @@ export default class Home extends Vue {
         for (const edgesKey in this.edges) {
           delete this.edges[edgesKey];
         }
+        this.graph.name = response.name;
+        this.graph.author = response.author;
+        this.graph.date = response.date;
+        this.graph.description = response.description;
         this.graph.nodes = response.nodes;
         this.graph.edges = response.edges;
         this.graph.CreateNodes(this.nodes);
@@ -311,13 +433,13 @@ export default class Home extends Vue {
         this.CloseDialog();
         this.handleRemove(file, fileList);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
     }
-  }
+  };
 
   // eslint-disable-next-line class-methods-use-this
-  DeleteLink(selectedEdge: Edge):void {
+  DeleteLink(selectedEdge: Edge): void {
     for (let i = 0; i < this.graph.edges.length; i += 1) {
       if (this.graph.edges[i] === selectedEdge) {
         this.graph.edges.splice(i, 1);
@@ -343,14 +465,15 @@ export default class Home extends Vue {
   DownloadImageMapMethod() {
     const cardMap = document.getElementById('cardMap');
     if (cardMap !== null) {
-      html2canvas(cardMap).then(
-        (canvas) => {
-          const link = document.createElement('a');
-          link.download = `${this.nameMapImage}.png`;
-          link.href = canvas.toDataURL();
-          link.click();
-        },
-      );
+      html2canvas(cardMap)
+        .then(
+          (canvas) => {
+            const link = document.createElement('a');
+            link.download = `${this.nameMapImage}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+          },
+        );
     }
   }
 
@@ -372,7 +495,7 @@ export default class Home extends Vue {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  DeleteNode(selectedNode: Node):void{
+  DeleteNode(selectedNode: Node): void {
     if ((selectedNode.links !== undefined && selectedNode.links.length > 0)
       || this.graph.CheckNodesDelete(selectedNode)) {
       ElMessage.error('The node is connected to other nodes, remove all links first');
@@ -386,7 +509,7 @@ export default class Home extends Vue {
     }
   }
 
-  AddLink():void {
+  AddLink(): void {
     if (this.target) {
       this.graph.edges.push(
         {
@@ -414,7 +537,25 @@ export default class Home extends Vue {
     }
   }
 
-  AddNode():void {
+  AddFormMap():void {
+    const formMapRef = this.$refs.formMapRef as any;
+    formMapRef.validate(async (valid: boolean) => {
+      if (valid) {
+        this.visibleAddForm = false;
+      }
+    });
+  }
+
+  CloseDialogForm():void{
+    const formMapRef = this.$refs.formMapRef as any;
+    formMapRef.validate(async (valid: boolean) => {
+      if (valid) {
+        this.visibleAddForm = false;
+      }
+    });
+  }
+
+  AddNode(): void {
     const formRef = this.$refs.formNodes as any;
     formRef.validate(async (valid: boolean) => {
       if (valid) {
@@ -434,12 +575,14 @@ export default class Home extends Vue {
           this.graph.CreateNodes(this.nodes);
           this.formNode.nodeDescription = '';
           this.formNode.nodeName = '';
-        } else ElMessage.error('Nodo giá presente');
+        } else {
+          ElMessage.error('Nodo giá presente');
+        }
       }
     });
   }
 
-  CheckDuplicate():boolean {
+  CheckDuplicate(): boolean {
     let flag = false;
     this.graph.nodes.forEach((node) => {
       if (node.name === this.formNode.nodeName) flag = true;
@@ -447,7 +590,7 @@ export default class Home extends Vue {
     return flag;
   }
 
-  SelectSource():void {
+  SelectSource(): void {
     // eslint-disable-next-line no-restricted-syntax
     for (const i of this.graph.nodes) {
       if (i.name === this.source) {
@@ -457,13 +600,18 @@ export default class Home extends Vue {
   }
 
   @Watch('downloadAction')
-  WatchDownloadAction(newVal:boolean) {
-    if (newVal) this.visibleFileName = !this.visibleFileName;
+  WatchDownloadAction(newVal: boolean) {
+    if (newVal) this.visibleFileName = true;
   }
 
   @Watch('downloadImageAction')
-  WatchDownloadImageAction(newVal:boolean) {
-    if (newVal) this.visibleFileNameImage = !this.visibleFileNameImage;
+  WatchDownloadImageAction(newVal: boolean) {
+    if (newVal) this.visibleFileNameImage = true;
+  }
+
+  @Watch('clickedadddetailmap')
+  WatchCreateFormMap(newVal: boolean) {
+    if (newVal) this.visibleAddForm = true;
   }
 
   @Emit()
