@@ -11,11 +11,11 @@
                    default-active="1">
             <el-menu-item index="1" >
               <el-icon><icon-menu /></el-icon>
-              <template #title>Map detail</template>
+              <template #title>Map</template>
             </el-menu-item>
             <el-menu-item index="2" @click="AddFormMap">
               <el-icon><edit-pen /></el-icon>
-              <template #title>create Map</template>
+              <template #title>details Map</template>
             </el-menu-item>
             <el-sub-menu index="3" >
               <template #title>

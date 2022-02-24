@@ -1,9 +1,9 @@
 <template>
   <el-main>
-    <h1>CREATE YOUR CONCEPT MAP</h1>
+    <h1>CONCEPT MAP {{graph.name}} by {{graph.author}}</h1>
     <el-row :gutter="10">
       <!-- FIRST COLUMN -->
-      <el-col :lg="12" :md="12" :sm="24" :xl="12" :xs="24">
+      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
         <el-row>
           <!-- ADD NODE -->
           <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
@@ -66,7 +66,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :lg="12" :md="24" :sm="24" :xl="6" :xs="24">
+                <el-col :xs="24" :sm="24" :md="24"  :lg="12" :xl="6">
                   <el-form-item label="To node">
                     <el-select v-model="target" placeholder="Select">
                       <el-option
@@ -198,57 +198,87 @@
     </el-row>
   </el-dialog>
 
-  <el-dialog v-model="visibleAddForm" width="30%">
-    <el-row :gutter="10">
-      <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
-        <el-form ref="formMapRef" label-position="top"
-                 label-width="150px">
-          <el-row>
-            <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
-              <el-form-item label="Map name">
-                <el-input v-model="graph.name"
-                          placeholder="enter name"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
+  <el-dialog v-model="visibleAddForm" width="30%"
+             :before-close="NoCLoseMethod" :show-close="false">
+    <el-tabs type="border-card">
+      <el-tab-pane label="Add map detail">
+        <el-row :gutter="10">
+          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+            <el-form ref="formMapRef" label-position="top" :model="graph" :rules="rulesFormMap"
+                     label-width="150px">
+              <el-row>
+                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                  <el-form-item label="Map name" prop="name">
+                    <el-input v-model="graph.name"
+                              placeholder="enter name"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
 
-          <el-row>
-            <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
-              <el-form-item label="Author">
-                <el-input v-model="graph.author"
-                          placeholder="add description"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
+              <el-row>
+                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                  <el-form-item label="Author" prop="author">
+                    <el-input v-model="graph.author"
+                              placeholder="add description"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
 
-          <el-row>
-            <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
-              <el-form-item label="Data">
-                <el-date-picker v-model="graph.date"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
+              <el-row>
+                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                  <el-form-item label="Data">
+                    <el-date-picker disabled v-model="graph.date"></el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-row>
 
-          <el-row>
-            <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
-              <el-form-item label="Description">
-                <el-input v-model="graph.description" placeholder="add description"
-                          type="textarea"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-
-            <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
-              <el-form-item>
-                <el-button type="success">OK</el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-        </el-form>
-
+              <el-row>
+                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                  <el-form-item label="Description">
+                    <el-input v-model="graph.description" placeholder="add description"
+                              type="textarea"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="Upload">
+        <el-upload
+          ref="upload"
+          :auto-upload="false"
+          :limit="1"
+          :on-change="UploadFileMethod"
+          :on-exceed="handleExceed"
+          :on-remove="handleRemove"
+          accept="application/json"
+          class="upload-demo"
+          drag>
+          <el-icon class="el-icon--upload">
+            <upload-filled/>
+          </el-icon>
+          <div class="el-upload__text">
+            Drop file here or <em>click to upload</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">
+              only json files
+            </div>
+          </template>
+        </el-upload>
+      </el-tab-pane>
+    </el-tabs>
+    <el-row justify="end" style="padding: 10px;">
+      <el-col :lg="12" :md="12" :sm="12" :xl="4" :xs="24">
+        <el-form-item>
+          <el-button type="danger" @click="CloseDialogForm">Close</el-button>
+        </el-form-item>
+      </el-col>
+      <el-col :lg="12" :md="12" :sm="12" :xl="4" :xs="24">
+        <el-form-item>
+          <el-button type="success" @click="AddFormMap">Create</el-button>
+        </el-form-item>
       </el-col>
     </el-row>
   </el-dialog>
@@ -274,8 +304,6 @@ const upload = ref();
   },
 })
 export default class Home extends Vue {
-  fileUploaded = [];
-
   visibleFileName = false;
 
   visibleFileNameImage = false;
@@ -338,10 +366,31 @@ export default class Home extends Vue {
     ],
   };
 
+  public rulesFormMap = {
+    name: [
+      {
+        required: true,
+        message: 'Campo obbligatorio',
+        trigger: 'blur',
+      },
+    ],
+    author: [
+      {
+        required: true,
+        message: 'Campo obbligatorio',
+        trigger: 'blur',
+      },
+    ],
+  };
+
   // eslint-disable-next-line max-len
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,class-methods-use-this
   sleep() {
     return new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
+  NoCLoseMethod() {
+    this.visibleAddForm = true;
   }
 
   handleRemove = async (file: UploadFile, fileList: FileList[]) => {
@@ -368,6 +417,10 @@ export default class Home extends Vue {
         for (const edgesKey in this.edges) {
           delete this.edges[edgesKey];
         }
+        this.graph.name = response.name;
+        this.graph.author = response.author;
+        this.graph.date = response.date;
+        this.graph.description = response.description;
         this.graph.nodes = response.nodes;
         this.graph.edges = response.edges;
         this.graph.CreateNodes(this.nodes);
@@ -482,6 +535,24 @@ export default class Home extends Vue {
       this.source = '';
       this.description = '';
     }
+  }
+
+  AddFormMap():void {
+    const formMapRef = this.$refs.formMapRef as any;
+    formMapRef.validate(async (valid: boolean) => {
+      if (valid) {
+        this.visibleAddForm = false;
+      }
+    });
+  }
+
+  CloseDialogForm():void{
+    const formMapRef = this.$refs.formMapRef as any;
+    formMapRef.validate(async (valid: boolean) => {
+      if (valid) {
+        this.visibleAddForm = false;
+      }
+    });
   }
 
   AddNode(): void {
