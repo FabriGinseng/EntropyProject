@@ -50,8 +50,8 @@ export default class Home extends Vue {
         normal: {
           type: 'rect',
           radius: (node) => node.size, // Use the value of each node object
-          width: 150,
-          height: 100,
+          width: 100,
+          height: 70,
           color: (node) => node.color,
           strokeWidth: 1,
           strokeColor: '#000000',
