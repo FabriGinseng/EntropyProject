@@ -48,10 +48,8 @@ export default class Home extends Vue {
     configs = reactive({
       node: {
         normal: {
-          type: 'rect',
+          type: 'circle',
           radius: (node) => node.size, // Use the value of each node object
-          width: 100,
-          height: 70,
           color: (node) => node.color,
           strokeWidth: 1,
           strokeColor: '#000000',
