@@ -18,13 +18,13 @@ export interface Node{
   index: number
   size: number;
   description:string;
-  links:Array<string>;
+  links: Array<any>;
   linkWeight:number;
   entropy:number;
 }
 /**
  * This interface describes the Edges in the graph
- * @interface Node
+ * @interface Edge
  * @member name edge name
  * @member source node source
  * @member target node target
@@ -37,6 +37,8 @@ export interface Edge {
   target:string;
   label:string
   weight:number
+  probability:number
+  isEdit:boolean
 }
 
 /**
@@ -98,11 +100,11 @@ export default class Map {
    * this function create a list of links
    * @param linkList
    */
-  public CreateLinks(linkList:any):void {
+  public CreateEdges(linkList:any):void {
     this.edges.forEach((edge) => {
       // eslint-disable-next-line no-param-reassign
       linkList[edge.name] = {
-        source: edge.source, target: edge.target, label: `${edge.label}(${edge.weight})`, peso: 0,
+        source: edge.source, target: edge.target, label: `${edge.label}(${edge.weight})`, peso: edge.probability,
       };
     });
   }
@@ -136,17 +138,54 @@ export default class Map {
   }
 
   /**
+   * the function return the weight of link
+   * @param listEdges
+   */
+  public CalculateProbabilitySum(listEdges:any):void {
+    const tempEdges:any = [];
+    this.edges.forEach((edge) => {
+      if (tempEdges[edge.source] === undefined) tempEdges[edge.source] = [];
+      tempEdges[edge.source].push({ target: edge.target, p: edge.probability });
+    });
+    this.nodes.forEach((node) => {
+      // eslint-disable-next-line no-param-reassign
+      node.links = tempEdges[node.name];
+      // eslint-disable-next-line no-param-reassign
+      if (!(node.links === undefined)) {
+        // eslint-disable-next-line no-param-reassign
+        node.linkWeight = 0;
+        // eslint-disable-next-line no-restricted-syntax
+        for (const pro of node.links) {
+          // eslint-disable-next-line no-param-reassign
+          node.linkWeight += pro.p;
+        }
+        console.log('peso totale', node.linkWeight);
+      }
+      this.edges.forEach((edge) => {
+        if (edge.source === node.name) {
+          // eslint-disable-next-line no-param-reassign
+          edge.weight = node.linkWeight;
+        }
+        // eslint-disable-next-line no-param-reassign
+        listEdges[edge.name] = {
+          source: edge.source, target: edge.target, label: `${edge.label}`, peso: edge.probability,
+        };
+      });
+    });
+  }
+
+  /**
    * the function return the edge entropy
    * @param listEdges
    * @constructor
    */
   public CalculateEntropyEdges(listEdges:any):void {
     this.nodes.forEach((node) => {
-      const entropy = -1 * (node.linkWeight * (Math.log2(node.linkWeight)));
       this.edges.forEach((edge) => {
         if (edge.source === node.name) {
+          const entropy = -1 * (edge.probability * (Math.log2(edge.probability)));
           // eslint-disable-next-line no-param-reassign
-          listEdges[edge.name].label = `${edge.label} (${entropy.toFixed(2)})`;
+          listEdges[edge.name].label = `${edge.label} P:(${edge.probability}) H:(${entropy.toFixed(2)})`;
         }
       });
     });
@@ -157,34 +196,40 @@ export default class Map {
    */
   public CalculateEntropy():void {
     this.nodes.forEach((node) => {
-      const link:number[] = [];
+      try {
+        const link:number[] = [];
 
-      this.nodes.forEach((nodeEnter:Node) => {
-        if (nodeEnter.links !== undefined && nodeEnter.links.length > 0) {
-          // eslint-disable-next-line no-restricted-syntax
-          for (const i of nodeEnter.links) {
-            if (i === node.name) {
-              link.push(nodeEnter.linkWeight * (Math.log2(nodeEnter.linkWeight)));
-              break;
+        this.nodes.forEach((nodeEnter:Node) => {
+          if (nodeEnter.links !== undefined && nodeEnter.links.length > 0) {
+            // eslint-disable-next-line no-restricted-syntax
+            for (const i of nodeEnter.links) {
+              if (i.target === node.name) {
+                link.push(i.p * (Math.log2(i.p)));
+                break;
+              }
             }
-          }
-          // eslint-disable-next-line no-param-reassign
-          node.entropy = 0;
-          // eslint-disable-next-line no-restricted-syntax,no-param-reassign
-          for (const y of link) node.entropy += y;
-          // eslint-disable-next-line no-param-reassign
-          node.entropy *= -1;
-        }
-        /* this.edges.forEach((edge) => {
-          if (edge.target === node.name) {
             // eslint-disable-next-line no-param-reassign
-            listEdges[edge.name].label = `${edge.label} (${node.entropy.toFixed(3)})`;
+            node.entropy = 0;
+            // eslint-disable-next-line no-restricted-syntax,no-param-reassign
+            for (const y of link) node.entropy += y;
+            // eslint-disable-next-line no-param-reassign
+            node.entropy *= -1;
           }
-        }); */
-      });
-      this.GraphEntropy();
-      // eslint-disable-next-line max-len
-      this.totalEntropyPerc = Number((100 * (this.totalEntropy / (Math.log2(this.factorialize(this.nodes.length - 1))))).toFixed(3));
+          /* this.edges.forEach((edge) => {
+            if (edge.target === node.name) {
+              // eslint-disable-next-line no-param-reassign
+              listEdges[edge.name].label = `${edge.label} (${node.entropy.toFixed(3)})`;
+            }
+          }); */
+        });
+
+        this.CalculateGraphEntropy();
+        // eslint-disable-next-line no-restricted-globals
+        this.totalEntropyPerc = !isNaN(this.totalEntropyPerc) ? Number((100 * (this.totalEntropy
+          / (Math.log2(this.factorialize(this.nodes.length - 1))))).toFixed(3)) : 0;
+      } catch (error:any) {
+        console.log(error);
+      }
     });
   }
 
@@ -205,7 +250,7 @@ export default class Map {
    * @private
    * @return totalEntropy
    */
-  private GraphEntropy():number {
+  private CalculateGraphEntropy():number {
     this.totalEntropy = 0;
     this.nodes.forEach((node) => {
       this.totalEntropy += Number((node.entropy).toFixed(3));
@@ -228,7 +273,7 @@ export default class Map {
       if (nodeSelected.links) {
         for (let z = 0; z < nodeSelected.links.length; z += 1) {
           const y = nodeSelected.links[z];
-          if (y === i.name) flag = false;
+          if (y.target === i.name) flag = false;
         }
       }
       if (nodeSelected.name === i.name) flag = false;
@@ -237,7 +282,7 @@ export default class Map {
         if (i.links) {
           for (let z = 0; z < i.links.length; z += 1) {
             const y = i.links[z];
-            if (nodeSelected.name === y) {
+            if (nodeSelected.name === y.target) {
               tempNodes.push(i);
               flag = false;
               break;
@@ -251,25 +296,24 @@ export default class Map {
   }
 
   /**
-   * The function checks whether the links loop and returns the list of nodes that can be linked
-   * from the pass node as a parameter
+   * The function checks if the node is linking with another
    * @param nodeSelected
    * @return GenerateListLinks
    */
   public CheckNodesDelete(nodeSelected:Node):boolean {
-    let flag = false;
+    let isLink = false;
     for (let i = 0; i < this.nodes.length; i += 1) {
       if (this.nodes[i].links !== undefined) {
         for (let z = 0; z < this.nodes[i].links.length; z += 1) {
           if (this.nodes[i].links[z] === nodeSelected.name) {
-            flag = true;
+            isLink = true;
             break;
           }
         }
       }
-      if (flag) break;
+      if (isLink) break;
     }
-    return flag;
+    return isLink;
   }
 
   /**

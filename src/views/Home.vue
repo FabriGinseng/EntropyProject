@@ -2,124 +2,8 @@
   <el-main>
     <h1>CONCEPT MAP {{graph.name}} by {{graph.author}}</h1>
     <el-row :gutter="10">
-      <!-- FIRST COLUMN -->
-      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-        <el-row>
-          <!-- ADD NODE -->
-          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
-            <el-card>
-              <h2>ADD NODE</h2>
-              <el-form ref="formNodes" :model="formNode" :rules="rules" label-position="top"
-                       label-width="150px">
-                <el-form-item label="Name" prop="nodeName">
-                  <el-input v-model="formNode.nodeName"></el-input>
-                </el-form-item>
-                <el-form-item label="Description" prop="nodeDescription">
-                  <el-input v-model="formNode.nodeDescription" type="textarea"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button @click="AddNode()">ADD</el-button>
-                </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-divider border-style="double"></el-divider>
-        <!-- NODES -->
-        <el-row>
-          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
-            <el-card>
-              <h2>NODES</h2>
-              <el-table :data="graph.nodes">
-                <el-table-column label="Name" prop="name"/>
-                <el-table-column label="Description" prop="description"/>
-                <el-table-column label="Operations">
-                  <template #default="scope">
-                    <el-button circle type="danger" @click="DeleteNode(scope.row)">
-                      <el-icon>
-                        <delete/>
-                      </el-icon>
-                    </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-divider border-style="double"></el-divider>
-        <el-row>
-          <!-- ADD ARCS -->
-          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
-            <el-card>
-              <h2>ADD EDGES</h2>
-              <el-form ref="formRef" :disabled="graph.nodes.length < 2" :inline="true"
-                       label-position="left">
-                <el-col :lg="12" :md="24" :sm="24" :xl="6" :xs="24">
-                  <el-form-item label="From node">
-                    <el-select v-model="source" placeholder="Select" @change="SelectSource">
-                      <el-option
-                        v-for="item in graph.nodes"
-                        :key="item.name"
-                        :label="item.name"
-                        :value="item.name">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="24" :md="24"  :lg="12" :xl="6">
-                  <el-form-item label="To node">
-                    <el-select v-model="target" placeholder="Select">
-                      <el-option
-                        v-for="item in nodesLink"
-                        :key="item.name"
-                        :disabled="item.name === source"
-                        :label="item.name"
-                        :value="item.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :lg="12" :md="24" :sm="24" :xl="6" :xs="24">
-                  <el-form-item label="Description">
-                    <el-input v-model="description" placeholder="add description"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :lg="12" :md="24" :sm="24" :xl="6" :xs="24">
-                  <el-form-item>
-                    <el-button :disabled="nodesLink.length === 0" @click="AddLink()">ADD</el-button>
-                  </el-form-item>
-                </el-col>
-              </el-form>
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-divider border-style="double"></el-divider>
-        <el-row>
-          <!-- ARCS -->
-          <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
-            <el-card>
-              <h2>EDGES</h2>
-              <el-table :data="graph.edges">
-                <el-table-column label="Source" prop="source"/>
-                <el-table-column label="Target" prop="target"/>
-                <el-table-column label="Operations">
-                  <template #default="scope">
-                    <el-button circle type="danger" @click="DeleteLink(scope.row)">
-                      <el-icon>
-                        <delete/>
-                      </el-icon>
-                    </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-card>
-          </el-col>
-        </el-row>
-      </el-col>
-
-      <!-- SECOND COLUMN -->
-      <el-col :lg="12" :md="12" :sm="24" :xl="12" :xs="24">
+      <!-- COLUMN -->
+      <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
         <el-row>
           <!-- ENTROPY -->
           <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
@@ -146,6 +30,151 @@
       </el-col>
     </el-row>
   </el-main>
+  <el-dialog v-model="openNodesMap" :destroy-on-close="true">
+    <el-row>
+      <!-- ADD NODE -->
+      <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+        <el-card>
+          <h2>ADD NODE</h2>
+          <el-form ref="formNodes" :model="formNode" :rules="rules" label-position="top"
+                   label-width="150px">
+            <el-form-item label="Name" prop="nodeName">
+              <el-input v-model="formNode.nodeName"></el-input>
+            </el-form-item>
+            <el-form-item label="Description" prop="nodeDescription">
+              <el-input v-model="formNode.nodeDescription" type="textarea"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="AddNode()">ADD</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-divider border-style="double"></el-divider>
+    <!-- NODES -->
+    <el-row>
+      <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+        <el-card>
+          <h2>NODES</h2>
+          <el-table :data="graph.nodes">
+            <el-table-column label="Name" prop="name"/>
+            <el-table-column label="Description" prop="description"/>
+            <el-table-column label="Operations">
+              <template #default="scope">
+                <el-button circle type="danger" @click="DeleteNode(scope.row)">
+                  <el-icon>
+                    <delete/>
+                  </el-icon>
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-divider border-style="double"></el-divider>
+  </el-dialog>
+  <el-dialog v-model="openEdgesMap" :destroy-on-close="true" width="70%">
+    <el-row>
+      <!-- ADD ARCS -->
+      <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+        <el-card>
+          <h2>ADD EDGES</h2>
+          <el-form ref="formRef" :disabled="graph.nodes.length < 2" :inline="true"
+                   label-position="left">
+            <el-col :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
+              <el-form-item label="From node">
+                <el-select v-model="source" placeholder="Select" @change="SelectSource">
+                  <el-option
+                    v-for="item in graph.nodes"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="24"  :lg="12" :xl="8">
+              <el-form-item label="To node">
+                <el-select v-model="target" placeholder="Select">
+                  <el-option
+                    v-for="item in nodesLink"
+                    :key="item.name"
+                    :disabled="item.name === source"
+                    :label="item.name"
+                    :value="item.name">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
+              <el-form-item label="Description">
+                <el-input v-model="description" placeholder="add description"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
+              <el-form-item label="Probability">
+                <el-input-number :precision="2" :step="0.01" v-model="probability"
+                                 :max="1" :min="0" ></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
+              <el-form-item>
+                <el-button :disabled="nodesLink.length === 0"
+                           @click="AddLink()">ADD</el-button>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-divider border-style="double"></el-divider>
+    <el-row>
+      <!-- ARCS -->
+      <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
+        <el-card>
+          <h2>EDGES</h2>
+          <el-table :data="graph.edges" table-layout="auto">
+            <el-table-column label="Source" prop="source"/>
+            <el-table-column label="Target" prop="target"/>
+            <el-table-column label="Description" prop="label">
+              <template #default="scope">
+                <label v-if="!scope.row.isEdit">{{scope.row.label}}</label>
+                <el-input v-else v-model="description" placeholder="edit description"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="Probability" prop="probability">
+              <template #default="scope">
+                <label v-if="!scope.row.isEdit">{{scope.row.probability}}</label>
+                <el-input-number v-else precision="2" :step="0.01"
+                                 v-model="probability" size="small"
+                          :max="1" :min="0"></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column >
+              <template #default="scope">
+                <el-button v-if="!scope.row.isEdit" circle type="danger"
+                           @click="DeleteLink(scope.row)">
+                  <el-icon>
+                    <delete/>
+                  </el-icon>
+                </el-button>
+                <el-button v-if="!scope.row.isEdit" circle type="info" @click="EditLink(scope.row)">
+                  <el-icon>
+                    <edit-pen/>
+                  </el-icon>
+                </el-button>
+                <el-button v-if="scope.row.isEdit" type="info"
+                           @click="SaveEditLink(scope.row)">SALVA
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </el-col>
+    </el-row>
+  </el-dialog>
   <el-dialog v-model="clickedUpload" :destroy-on-close="true" :show-close="false"
              draggable>
     <el-row>
@@ -207,7 +236,7 @@
             <el-form ref="formMapRef" label-position="top" :model="graph" :rules="rulesFormMap"
                      label-width="150px">
               <el-row>
-                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
                   <el-form-item label="Map name" prop="name">
                     <el-input v-model="graph.name"
                               placeholder="enter name"></el-input>
@@ -216,7 +245,7 @@
               </el-row>
 
               <el-row>
-                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
                   <el-form-item label="Author" prop="author">
                     <el-input v-model="graph.author"
                               placeholder="add description"></el-input>
@@ -225,7 +254,7 @@
               </el-row>
 
               <el-row>
-                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
                   <el-form-item label="Data">
                     <el-date-picker disabled v-model="graph.date"></el-date-picker>
                   </el-form-item>
@@ -233,7 +262,7 @@
               </el-row>
 
               <el-row>
-                <el-col :lg="12" :md="24" :sm="24" :xl="24" :xs="24">
+                <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
                   <el-form-item label="Description">
                     <el-input v-model="graph.description" placeholder="add description"
                               type="textarea"></el-input>
@@ -289,7 +318,7 @@ import { Options, Vue } from 'vue-class-component';
 import Map, { Edge, Node } from '@/Classes/Map';
 import GraphComponent from '@/components/GraphComponent.vue';
 import { ElMessage } from 'element-plus';
-import { Delete, UploadFilled } from '@element-plus/icons-vue';
+import { Delete, UploadFilled, EditPen } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import { Emit, Prop, Watch } from 'vue-property-decorator';
 import { UploadFile } from 'element-plus/es/components/upload/src/upload.type';
@@ -300,10 +329,13 @@ const upload = ref();
   components: {
     GraphComponent,
     Delete,
+    EditPen,
     UploadFilled,
   },
 })
 export default class Home extends Vue {
+  probability = 0
+
   visibleFileName = false;
 
   visibleFileNameImage = false;
@@ -345,7 +377,11 @@ export default class Home extends Vue {
 
   @Prop() readonly downloadImageAction: boolean | undefined;
 
-  @Prop() readonly clickedadddetailmap: boolean | undefined;
+  @Prop() readonly openFormMap: boolean | undefined;
+
+  @Prop() readonly openEdgesMap: boolean | undefined;
+
+  @Prop() readonly openNodesMap: boolean | undefined;
 
   public graph: Map = new Map();
 
@@ -424,7 +460,7 @@ export default class Home extends Vue {
         this.graph.nodes = response.nodes;
         this.graph.edges = response.edges;
         this.graph.CreateNodes(this.nodes);
-        this.graph.CreateLinks(this.edges);
+        this.graph.CreateEdges(this.edges);
         this.graph.CalculateWeight(this.edges);
         this.graph.CalculateEntropy();
         this.graph.CalculateEntropyEdges(this.edges);
@@ -450,6 +486,40 @@ export default class Home extends Vue {
         break;
       }
     }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  EditLink(selectedEdge: Edge): void {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const j of this.graph.edges) {
+      if (j.isEdit) {
+        ElMessage('You can edit only one row');
+        return;
+      }
+    }
+    this.probability = selectedEdge.probability;
+    this.description = selectedEdge.label;
+    // eslint-disable-next-line no-param-reassign
+    selectedEdge.isEdit = true;
+  }
+
+  SaveEditLink(selectedEdge: Edge): void {
+    // eslint-disable-next-line no-param-reassign
+    selectedEdge.probability = this.probability;
+    // eslint-disable-next-line no-param-reassign
+    selectedEdge.label = this.description;
+    for (let i = 0; i < this.graph.edges.length; i += 1) {
+      if (this.graph.edges[i] === selectedEdge) {
+        this.graph.CalculateWeight(this.edges);
+        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropyEdges(this.edges);
+        break;
+      }
+    }
+    this.probability = 0;
+    this.description = '';
+    // eslint-disable-next-line no-param-reassign
+    selectedEdge.isEdit = false;
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -510,30 +580,37 @@ export default class Home extends Vue {
   }
 
   AddLink(): void {
-    if (this.target) {
-      this.graph.edges.push(
-        {
-          // eslint-disable-next-line no-plusplus
-          name: `Link ${this.countName++}`,
-          source: this.source,
-          target: this.target,
-          label: this.description,
-          weight: 0,
-        },
-      );
-      this.graph.CreateLinks(this.edges);
-      this.graph.CalculateWeight(this.edges);
-      this.graph.CalculateEntropy();
-      this.graph.CalculateEntropyEdges(this.edges);
-      this.target = '';
-      // eslint-disable-next-line no-restricted-syntax
-      for (const i of this.graph.nodes) {
-        if (i.name === this.source) {
-          this.nodesLink = this.graph.CheckCycle(i);
+    try {
+      if (this.target && this.probability) {
+        this.graph.edges.push(
+          {
+            // eslint-disable-next-line no-plusplus
+            name: `Link ${this.countName++}`,
+            source: this.source,
+            target: this.target,
+            label: this.description,
+            weight: 0,
+            probability: this.probability,
+            isEdit: false,
+          },
+        );
+        this.graph.CreateEdges(this.edges);
+        this.graph.CalculateProbabilitySum(this.edges);
+        this.graph.CalculateEntropy();
+        this.graph.CalculateEntropyEdges(this.edges);
+        this.target = '';
+        // eslint-disable-next-line no-restricted-syntax
+        for (const i of this.graph.nodes) {
+          if (i.name === this.source) {
+            this.nodesLink = this.graph.CheckCycle(i);
+          }
         }
-      }
-      this.source = '';
-      this.description = '';
+        this.source = '';
+        this.description = '';
+        this.probability = 0;
+      } else ElMessage.error('Probability required');
+    } catch (erro:any) {
+      console.log(erro);
     }
   }
 
@@ -600,6 +677,7 @@ export default class Home extends Vue {
   }
 
   @Watch('downloadAction')
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   WatchDownloadAction(newVal: boolean) {
     if (newVal) this.visibleFileName = true;
   }
@@ -609,7 +687,7 @@ export default class Home extends Vue {
     if (newVal) this.visibleFileNameImage = true;
   }
 
-  @Watch('clickedadddetailmap')
+  @Watch('openFormMap')
   WatchCreateFormMap(newVal: boolean) {
     if (newVal) this.visibleAddForm = true;
   }

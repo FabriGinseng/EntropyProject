@@ -12,12 +12,11 @@
       <text
         x="0"
         y="0"
-        :font-size="12"
+        :font-size="20"
         text-anchor="middle"
         dominant-baseline="central"
         fill="#000000"
-      >{{ text }}</text
-      >
+      >{{ text }}</text>
     </template>
   <template #edge-label="{ edge, ...slotProps }">
     <v-edge-label
