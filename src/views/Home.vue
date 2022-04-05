@@ -75,7 +75,8 @@
     </el-row>
     <el-divider border-style="double"></el-divider>
   </el-dialog>
-  <el-dialog v-model="openEdgesMap" :destroy-on-close="true" width="70%">
+  <el-dialog v-model="openEdgesMap" :before-close="NoCLoseMethodEdge"
+             show-close="false" :destroy-on-close="true" width="70%">
     <el-row>
       <!-- ADD ARCS -->
       <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
@@ -113,7 +114,7 @@
                 <el-input v-model="description" placeholder="add description"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
+            <el-col v-if="false" :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
               <el-form-item label="Probability">
                 <el-input-number :precision="2" :step="0.01" v-model="probability"
                                  :max="1" :min="0" ></el-input-number>
@@ -166,11 +167,18 @@
                   </el-icon>
                 </el-button>
                 <el-button v-if="scope.row.isEdit" type="info"
-                           @click="SaveEditLink(scope.row)">SALVA
+                           @click="SaveEditLink(scope.row)">SAVE
                 </el-button>
               </template>
             </el-table-column>
           </el-table>
+
+          <el-col :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
+            <el-form-item>
+              <el-button
+                         @click="AddLinkConfirmed()">SAVE</el-button>
+            </el-form-item>
+          </el-col>
         </el-card>
       </el-col>
     </el-row>
@@ -379,7 +387,7 @@ export default class Home extends Vue {
 
   @Prop() readonly openFormMap: boolean | undefined;
 
-  @Prop() readonly openEdgesMap: boolean | undefined;
+  @Prop() openEdgesMap: boolean | undefined;
 
   @Prop() readonly openNodesMap: boolean | undefined;
 
@@ -427,6 +435,10 @@ export default class Home extends Vue {
 
   NoCLoseMethod() {
     this.visibleAddForm = true;
+  }
+
+  NoCLoseMethodEdge() {
+    this.openEdgesMap = true;
   }
 
   handleRemove = async (file: UploadFile, fileList: FileList[]) => {
@@ -510,7 +522,7 @@ export default class Home extends Vue {
     selectedEdge.label = this.description;
     for (let i = 0; i < this.graph.edges.length; i += 1) {
       if (this.graph.edges[i] === selectedEdge) {
-        this.graph.CalculateWeight(this.edges);
+        this.graph.CalculateProbabilitySum(this.edges);
         this.graph.CalculateEntropy();
         this.graph.CalculateEntropyEdges(this.edges);
         break;
@@ -581,7 +593,7 @@ export default class Home extends Vue {
 
   AddLink(): void {
     try {
-      if (this.target && this.probability) {
+      if (this.target) {
         this.graph.edges.push(
           {
             // eslint-disable-next-line no-plusplus
@@ -612,6 +624,11 @@ export default class Home extends Vue {
     } catch (erro:any) {
       console.log(erro);
     }
+  }
+
+  AddLinkConfirmed():void {
+    if (this.graph.VerifyProbability()) this.$emit('closeDialogEdge');
+    else ElMessage.error('Probability not corrected');
   }
 
   AddFormMap():void {
@@ -668,7 +685,7 @@ export default class Home extends Vue {
   }
 
   SelectSource(): void {
-    // eslint-disable-next-line no-restricted-syntax
+  // eslint-disable-next-line no-restricted-syntax
     for (const i of this.graph.nodes) {
       if (i.name === this.source) {
         this.nodesLink = this.graph.CheckCycle(i);

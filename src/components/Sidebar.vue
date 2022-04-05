@@ -47,6 +47,7 @@
       <Home
         @CloseDialog="CloseDialogEvent"
             :clickedUpload = "clickUp" :downloadImageAction = "downloadImageAction"
+        @closeDialogEdge = "CloseDialagEdgeEvent"
             :openEdgesMap = "visibleEdge" :openNodesMap = "visibleNode"
             :downloadAction = "downloadAction" :openFormMap="visibleForm"/>
     </el-container>
@@ -104,6 +105,10 @@ export default class Sidebar extends Vue {
 
   public CloseDialogEvent():void{
     this.clickUp = !this.clickUp;
+  }
+
+  public CloseDialagEdgeEvent():void{
+    this.visibleEdge = !this.visibleEdge;
   }
 }
 </script>

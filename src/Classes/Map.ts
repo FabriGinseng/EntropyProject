@@ -175,6 +175,25 @@ export default class Map {
   }
 
   /**
+   * the function return the weight of link
+   * @param listEdges
+   */
+  public VerifyProbability():boolean {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const node of this.nodes) {
+      if (node.links !== undefined && node.links.length > 0) {
+        let probability = 0;
+        // eslint-disable-next-line no-restricted-syntax
+        for (const i of node.links) {
+          probability += i.p;
+        }
+        if (probability !== 1) return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * the function return the edge entropy
    * @param listEdges
    * @constructor
