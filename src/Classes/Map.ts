@@ -39,6 +39,7 @@ export interface Edge {
   weight:number
   probability:number
   isEdit:boolean
+  isEditProb:boolean
 }
 
 /**

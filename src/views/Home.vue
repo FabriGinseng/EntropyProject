@@ -141,13 +141,13 @@
             <el-table-column label="Target" prop="target"/>
             <el-table-column label="Description" prop="label">
               <template #default="scope">
-                <label v-if="!scope.row.isEdit">{{scope.row.label}}</label>
+                <label v-if="!scope.row.isEditProb">{{scope.row.label}}</label>
                 <el-input v-else v-model="description" placeholder="edit description"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="Probability" prop="probability">
               <template #default="scope">
-                <label v-if="!scope.row.isEdit">{{scope.row.probability}}</label>
+                <label v-if="!scope.row.isEditProb">{{scope.row.probability}}</label>
                 <el-input-number v-else precision="2" :step="0.01"
                                  v-model="probability" size="small"
                           :max="1" :min="0"></el-input-number>
@@ -155,30 +155,35 @@
             </el-table-column>
             <el-table-column >
               <template #default="scope">
-                <el-button v-if="!scope.row.isEdit" circle type="danger"
+                <el-button circle type="danger"
                            @click="DeleteLink(scope.row)">
                   <el-icon>
                     <delete/>
                   </el-icon>
                 </el-button>
-                <el-button v-if="!scope.row.isEdit" circle type="info" @click="EditLink(scope.row)">
+               <!-- <el-button v-if="!scope.row.isEditProb" circle type="info"
+                           @click="EditLink(scope.row)">
                   <el-icon>
                     <edit-pen/>
                   </el-icon>
-                </el-button>
-                <el-button v-if="scope.row.isEdit" type="info"
+                </el-button>-->
+                <!--<el-button v-if="scope.row.isEditProb" type="info"
                            @click="SaveEditLink(scope.row)">SAVE
-                </el-button>
+                </el-button>-->
               </template>
             </el-table-column>
           </el-table>
+    <el-row :gutter="10">
+      <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24" style="text-align: end">
+        <el-form-item >
+          <el-button
+            style="justify-content: end"
+            @click="AddLinkConfirmed()">SAVE
+          </el-button>
+        </el-form-item>
+    </el-col>
+</el-row>
 
-          <el-col :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
-            <el-form-item>
-              <el-button
-                         @click="AddLinkConfirmed()">SAVE</el-button>
-            </el-form-item>
-          </el-col>
         </el-card>
       </el-col>
     </el-row>
@@ -528,7 +533,7 @@ export default class Home extends Vue {
         break;
       }
     }
-    this.probability = 0;
+    // this.probability = 0;
     this.description = '';
     // eslint-disable-next-line no-param-reassign
     selectedEdge.isEdit = false;
@@ -604,6 +609,7 @@ export default class Home extends Vue {
             weight: 0,
             probability: this.probability,
             isEdit: false,
+            isEditProb: true,
           },
         );
         this.graph.CreateEdges(this.edges);
@@ -628,7 +634,7 @@ export default class Home extends Vue {
 
   AddLinkConfirmed():void {
     if (this.graph.VerifyProbability()) this.$emit('closeDialogEdge');
-    else ElMessage.error('Probability not corrected');
+    else ElMessage.error('enter a correct probability value');
   }
 
   AddFormMap():void {
