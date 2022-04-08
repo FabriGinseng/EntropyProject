@@ -142,14 +142,15 @@
             <el-table-column label="Description" prop="label">
               <template #default="scope">
                 <label v-if="!scope.row.isEditProb">{{scope.row.label}}</label>
-                <el-input v-else v-model="description" placeholder="edit description"></el-input>
+                <el-input v-else v-model="scope.row.label"
+                          placeholder="edit description"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="Probability" prop="probability">
               <template #default="scope">
                 <label v-if="!scope.row.isEditProb">{{scope.row.probability}}</label>
                 <el-input-number v-else precision="2" :step="0.01"
-                                 v-model="probability" size="small"
+                                 v-model="scope.row.probability" size="small"
                           :max="1" :min="0"></el-input-number>
               </template>
             </el-table-column>
@@ -596,22 +597,24 @@ export default class Home extends Vue {
     }
   }
 
-  AddLink(): void {
+  async AddLink() {
     try {
       if (this.target) {
+        this.countName += 1;
         this.graph.edges.push(
           {
             // eslint-disable-next-line no-plusplus
-            name: `Link ${this.countName++}`,
+            name: `Link ${this.countName}`,
             source: this.source,
             target: this.target,
             label: this.description,
             weight: 0,
-            probability: this.probability,
+            probability: 1,
             isEdit: false,
             isEditProb: true,
           },
         );
+
         this.graph.CreateEdges(this.edges);
         this.graph.CalculateProbabilitySum(this.edges);
         this.graph.CalculateEntropy();
@@ -633,8 +636,20 @@ export default class Home extends Vue {
   }
 
   AddLinkConfirmed():void {
-    if (this.graph.VerifyProbability()) this.$emit('closeDialogEdge');
-    else ElMessage.error('enter a correct probability value');
+    try {
+      console.log('1');
+      this.graph.CalculateProbabilitySum(this.edges);
+      this.graph.CalculateEntropy();
+      this.graph.CalculateEntropyEdges(this.edges);
+      console.log('2');
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      console.log('3');
+      if (this.graph.VerifyProbability()) this.$emit('closeDialogEdge');
+      else ElMessage.error('enter a correct probability value');
+      console.log('4');
+    }
   }
 
   AddFormMap():void {

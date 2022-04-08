@@ -114,18 +114,25 @@ export default class Map {
    * the function return the weight of link
    * @param listEdges
    */
-  public CalculateWeight(listEdges:any):void {
-    const tempEdges:any = [];
-    this.edges.forEach((edge) => {
-      if (tempEdges[edge.source] === undefined) tempEdges[edge.source] = [];
-      tempEdges[edge.source].push(edge.target);
-    });
-    this.nodes.forEach((node) => {
-      // eslint-disable-next-line no-param-reassign
-      node.links = tempEdges[node.name];
-      // eslint-disable-next-line no-param-reassign
-      if (!(node.links === undefined)) node.linkWeight = Number((1 / node.links.length).toFixed(3));
+  public CalculateWeight(listEdges:any) {
+    return new Promise<number>((resolve) => {
+      const tempEdges:any = [];
       this.edges.forEach((edge) => {
+        if (tempEdges[edge.source] === undefined) tempEdges[edge.source] = [];
+        tempEdges[edge.source].push(edge.target);
+      });
+      this.nodes.forEach((node) => {
+        // eslint-disable-next-line no-param-reassign
+        node.links = tempEdges[node.name];
+        let prova = 0;
+        // eslint-disable-next-line no-param-reassign
+        if (!(node.links === undefined)) {
+          prova = +(1 / node.links.length).toFixed(3);
+        }
+        return resolve(prova);
+      });
+
+      /* this.edges.forEach((edge) => {
         if (edge.source === node.name) {
           // eslint-disable-next-line no-param-reassign
           edge.weight = node.linkWeight;
@@ -134,7 +141,7 @@ export default class Map {
         listEdges[edge.name] = {
           source: edge.source, target: edge.target, label: `${edge.label}`, peso: edge.weight,
         };
-      });
+      }); */
     });
   }
 
@@ -176,8 +183,7 @@ export default class Map {
   }
 
   /**
-   * the function return the weight of link
-   * @param listEdges
+   * the function verify if the probability exceed 1
    */
   public VerifyProbability():boolean {
     // eslint-disable-next-line no-restricted-syntax
@@ -186,6 +192,7 @@ export default class Map {
         let probability = 0;
         // eslint-disable-next-line no-restricted-syntax
         for (const i of node.links) {
+          if (i.p === 0) return false;
           probability += i.p;
         }
         if (probability !== 1) return false;
