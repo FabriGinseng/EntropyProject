@@ -479,7 +479,7 @@ export default class Home extends Vue {
         this.graph.edges = response.edges;
         this.graph.CreateNodes(this.nodes);
         this.graph.CreateEdges(this.edges);
-        this.graph.CalculateWeight(this.edges);
+        this.graph.CalculateProbabilitySum(this.edges);
         this.graph.CalculateEntropy();
         this.graph.CalculateEntropyEdges(this.edges);
         this.countName = 0;
