@@ -146,7 +146,7 @@ export default class Map {
   }
 
   /**
-   * the function return the weight of link
+   * the function make the sum of all probability in a node
    * @param listEdges
    */
   public CalculateProbabilitySum(listEdges:any):void {
@@ -212,7 +212,7 @@ export default class Map {
         if (edge.source === node.name) {
           const entropy = -1 * (edge.probability * (Math.log2(edge.probability)));
           // eslint-disable-next-line no-param-reassign
-          listEdges[edge.name].label = `${edge.label} P:(${edge.probability}) H:(${entropy.toFixed(2)})`;
+          listEdges[edge.name].label = `${edge.label} P(${edge.probability}) H(${entropy.toFixed(2)})`;
         }
       });
     });

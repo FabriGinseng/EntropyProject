@@ -10,7 +10,7 @@
             <el-card header="H">
               <label>H(CM): {{ graph.totalEntropy }} </label>
               <el-divider></el-divider>
-              <label>H(CM)/Hmax: {{ graph.totalEntropyPerc }} </label>
+              <label>H(CM)/Hmax: {{ graph.totalEntropyPerc }} %</label>
             </el-card>
           </el-col>
         </el-row>
@@ -116,7 +116,7 @@
             </el-col>
             <el-col v-if="false" :lg="12" :md="24" :sm="24" :xl="8" :xs="24">
               <el-form-item label="Probability">
-                <el-input-number :precision="2" :step="0.01" v-model="probability"
+                <el-input-number :precision="2" :step="0.1" v-model="probability"
                                  :max="1" :min="0" ></el-input-number>
               </el-form-item>
             </el-col>
@@ -149,7 +149,7 @@
             <el-table-column label="Probability" prop="probability">
               <template #default="scope">
                 <label v-if="!scope.row.isEditProb">{{scope.row.probability}}</label>
-                <el-input-number v-else precision="2" :step="0.01"
+                <el-input-number v-else precision="2" lang="en"  :step="0.01"
                                  v-model="scope.row.probability" size="small"
                           :max="1" :min="0"></el-input-number>
               </template>
