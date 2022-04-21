@@ -4,7 +4,8 @@
     style="height: 100%; border: 1px solid #eee">
       <el-header style="text-align: right; padding-top: 8px;
       padding-bottom: 8px; background-color: #b3c0d1;">
-          <img src="https://www.unimercatorum.it/app/templates/public/default/assets/images/logo.png" style="max-height: 100%; min-height: 100%"/>
+        <label style="font-size: 20px; text-align: center">HCM SYSTEM</label>
+        <img src="https://www.unimercatorum.it/app/templates/public/default/assets/images/logo.png" style="max-height: 100%; min-height: 100%"/>
       </el-header>
     <el-container>
           <el-menu :collapse="true"
@@ -15,7 +16,7 @@
             </el-menu-item>
             <el-menu-item index="2" @click="AddFormMap">
               <el-icon><edit-pen /></el-icon>
-              <template #title>details Map</template>
+              <template #title>Map details</template>
             </el-menu-item>
             <el-sub-menu index="3" >
               <template #title>
@@ -23,9 +24,9 @@
                 <span>Add</span>
                 </template>
               <el-menu-item-group>
-                <el-menu-item index="3-1" @click="AddNode">Add Node</el-menu-item>
+                <el-menu-item index="3-1" @click="AddNode">Nodes</el-menu-item>
                 <el-menu-item index="3-2"
-                              @click="AddEdge">Add Edge</el-menu-item>
+                              @click="AddEdge">Edges</el-menu-item>
               </el-menu-item-group>
             </el-sub-menu>
             <el-sub-menu index="4" >
@@ -34,14 +35,14 @@
                 <span>Download</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="4-1" @click="Download">Download json map file</el-menu-item>
+                <el-menu-item index="4-1" @click="Download">Download map(.JSON)</el-menu-item>
                 <el-menu-item index="4-2"
-                              @click="DownloadImageMap">Download image map file</el-menu-item>
+                              @click="DownloadImageMap">Download map(.PNG)</el-menu-item>
               </el-menu-item-group>
             </el-sub-menu>
             <el-menu-item index="5" @click="Select">
               <el-icon><upload /></el-icon>
-              <template #title>upload map</template>
+              <template #title>Map upload</template>
             </el-menu-item>
           </el-menu>
       <Home

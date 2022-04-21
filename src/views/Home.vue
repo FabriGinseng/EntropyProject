@@ -1,13 +1,12 @@
 <template>
   <el-main>
-    <h1>CONCEPT MAP {{graph.name}} by {{graph.author}}</h1>
     <el-row :gutter="10">
       <!-- COLUMN -->
       <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
         <el-row>
           <!-- ENTROPY -->
           <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
-            <el-card header="H">
+            <el-card>
               <label>H(CM): {{ graph.totalEntropy }} </label>
               <el-divider></el-divider>
               <label>H(CM)/Hmax: {{ graph.totalEntropyPerc }} %</label>
@@ -18,7 +17,8 @@
         <el-row>
           <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
             <!-- MAP -->
-            <el-card header="CONCEPT MAP">
+            <h1>CONCEPT MAP {{graph.name}}</h1>
+            <el-card>
               <GraphComponent
                 id="cardMap"
                 :edges="edges"
