@@ -7,9 +7,9 @@
           <!-- ENTROPY -->
           <el-col :lg="24" :md="24" :sm="24" :xl="24" :xs="24">
             <el-card>
-              <label>H(CM): {{ graph.totalEntropy }} </label>
+              <label>H(CM): {{ graph.totalEntropy.toFixed(2) }} </label>
               <el-divider></el-divider>
-              <label>H(CM)/Hmax: {{ graph.totalEntropyPerc }} %</label>
+              <label>H(CM)/Hmax: {{ graph.totalEntropyPerc.toFixed(2) }} %</label>
             </el-card>
           </el-col>
         </el-row>
