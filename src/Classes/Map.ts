@@ -36,6 +36,7 @@ export interface Edge {
   source:string;
   target:string;
   label:string
+  labelBelow:string
   weight:number
   probability:number
   isEdit:boolean
@@ -212,7 +213,9 @@ export default class Map {
         if (edge.source === node.name) {
           const entropy = -1 * (edge.probability * (Math.log2(edge.probability)));
           // eslint-disable-next-line no-param-reassign
-          listEdges[edge.name].label = `${edge.label} P(${edge.probability}) H(${entropy.toFixed(2)})`;
+          listEdges[edge.name].label = `P(${edge.probability}) H(${entropy.toFixed(2)})`;
+          // eslint-disable-next-line no-param-reassign
+          listEdges[edge.name].labelBelow = `${edge.label}`;
         }
       });
     });

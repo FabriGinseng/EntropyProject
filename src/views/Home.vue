@@ -612,6 +612,7 @@ export default class Home extends Vue {
             probability: 1,
             isEdit: false,
             isEditProb: true,
+            labelBelow: this.description,
           },
         );
 

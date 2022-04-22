@@ -26,6 +26,12 @@
       :vertical-align="verticalAlign"
       v-bind="slotProps"
     />
+    <v-edge-label
+      :text="edge.labelBelow"
+      align="center"
+      vertical-align="below"
+      v-bind="slotProps"
+    />
   </template>
   </v-network-graph>
 </template>

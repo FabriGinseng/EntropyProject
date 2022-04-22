@@ -44,6 +44,10 @@
               <el-icon><upload /></el-icon>
               <template #title>Map upload</template>
             </el-menu-item>
+            <el-menu-item index="6" @click="ClearData">
+              <el-icon><edit-pen /></el-icon>
+              <template #title>Clear</template>
+            </el-menu-item>
           </el-menu>
       <Home
         @CloseDialog="CloseDialogEvent"
@@ -110,6 +114,11 @@ export default class Sidebar extends Vue {
 
   public CloseDialagEdgeEvent():void{
     this.visibleEdge = !this.visibleEdge;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  public ClearData():void{
+    window.location.reload();
   }
 }
 </script>
