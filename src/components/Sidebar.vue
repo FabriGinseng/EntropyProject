@@ -45,7 +45,7 @@
               <template #title>Map upload</template>
             </el-menu-item>
             <el-menu-item index="6" @click="ClearData">
-              <el-icon><edit-pen /></el-icon>
+              <el-icon><Loading/></el-icon>
               <template #title>Clear</template>
             </el-menu-item>
           </el-menu>
@@ -61,14 +61,14 @@
 
 <script lang="ts">
 import {
-  Message, Menu as IconMenu, Upload, Download, Setting, Delete, EditPen, Plus,
+  Message, Menu as IconMenu, Upload, Download, Setting, Delete, EditPen, Plus, Loading,
 } from '@element-plus/icons-vue';
 import Home from '@/views/Home.vue';
 import { Options, Vue } from 'vue-class-component';
 
 @Options({
   components: {
-    Message, IconMenu, Upload, Download, Setting, Delete, Home, EditPen, Plus,
+    Message, IconMenu, Upload, Download, Setting, Delete, Home, EditPen, Plus, Loading,
   },
 })
 export default class Sidebar extends Vue {
